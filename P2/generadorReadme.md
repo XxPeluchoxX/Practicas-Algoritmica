@@ -35,3 +35,4 @@ x y
 .
 .
 ```
+*Nota:* Los puntos estarán ordenados por su coordenada x.
