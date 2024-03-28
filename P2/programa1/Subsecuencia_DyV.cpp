@@ -2,42 +2,45 @@
 #include <iostream>
 #include <fstream>
 #include <chrono>
-#include <ctime>
-#include <cstdlib>
-#include <climits>
-#include <cassert>
+#include <random>
+#include <utility>
 
 using namespace std;
 
 
-#define PAIR
-
+/**
+ * @brief Funcion que calcula la suma de los elementos de un vector en un rango determinado.
+ * 
+ * @param v  Vector de enteros
+ * @param init Posicion inicial
+ * @param fin  Posicion final
+ * @return int Suma de los elementos del vector en el rango [init,fin]
+ */
 int suma(const vector<int> & v, int init, int fin){
-    int result=0; 
-    int middle=init+(fin-init)/2;
-    int i=middle;
-    int j=middle+1;
+    int result=0;
+
+    for(int i=init; i<=fin; i++)
+        result+=v[i];
     
-    while((i>=init)||(j<=fin)){
-        if(i>=init){
-            result+=v[i];
-            --i;
-        }
-        if(j<=fin){
-            result+=v[j];
-            ++j;
-        }
-    }
     return result;
 }
 
-#ifdef PAIR
 
+/**
+ * @brief Funcion que calcula la subsecuencia maxima de un vector de enteros.
+ * 
+ * @param v  Vector de enteros
+ * @param init  Posicion inicial
+ * @param fin  Posicion final
+ * @return pair<int,int>  Par de enteros que representan la posicion inicial y final de la subsecuencia maxima
+ */
 pair<int,int> subsecMax (const vector<int> &v, int init, int fin){
-    int tam = fin-init+1;
+        
     pair<int,int> result;
     int suma_result;
-    if(tam<=1){
+    
+    // Caso base. n=1
+    if(fin <= init){
         result.first=result.second=init;
         return result;
     }
@@ -45,52 +48,96 @@ pair<int,int> subsecMax (const vector<int> &v, int init, int fin){
     else{
         int middle=init + (fin-init)/2;
 
-        pair<int,int> result_i;
-        pair<int,int> result_d;
+        pair<int,int> result_izq  = subsecMax(v,init,middle);   // Subsecuencia maxima de la izquierda
+        pair<int,int> result_dcha = subsecMax(v,middle+1,fin);  // Subsecuencia maxima de la derecha
 
-        result_i=subsecMax(v,init,middle);
-        result_d=subsecMax(v,middle+1,fin);
+        int suma_izq  = suma(v,result_izq.first,result_izq.second);
+        int suma_dcha = suma(v,result_dcha.first,result_dcha.second);
 
-        //Unica posible combinacion 
 
-        pair <int,int>result_comb(result_i.first,result_d.second);
+        // Combinacion del centro
+		// Bucamos la subsecMax que contenga a middle y a middle+1
+        pair <int,int> result_central (middle,middle+1);
+		int sum_max = suma(v, result_central.first, result_central.second);
 
-        int suma_i,suma_d,suma_comb;
+		int sum_tmp = sum_max;		
+		// Actualizo el borde por la izquierda.
+		// Voy desplazandome a la izquierda (hasta encontrarme con result_izq) y actualizando la suma
+        int lim_izq_tmp;
+		for (lim_izq_tmp=result_central.first-1; lim_izq_tmp>result_izq.second; lim_izq_tmp--){
+			sum_tmp += v[lim_izq_tmp];
+			if (sum_tmp>=sum_max){
+				result_central.first = lim_izq_tmp;
+				sum_max = sum_tmp;
+			}
+		}
+        // Si se ha llegado a result_izq, se aprovecha que sabemos que la suma de result_izq es la mayor
+        if (lim_izq_tmp==result_izq.second){
+            sum_tmp += suma_izq;
+            if (sum_tmp>=sum_max){
+                result_central.first = result_izq.first;
+                sum_max = sum_tmp;
+            }
+        }
+		
+		// Actualizo el borde por la dcha.
+		// Voy desplazandome a la dcha (hasta encontrarme con result_dcha) y actualizando la suma
+		sum_tmp = sum_max;
+        int lim_dcha_tmp;
+		for (lim_dcha_tmp=result_central.second+1; lim_dcha_tmp<result_dcha.first; lim_dcha_tmp++){
+			sum_tmp += v[lim_dcha_tmp];
+			if (sum_tmp>=sum_max){
+				result_central.second = lim_dcha_tmp;
+				sum_max = sum_tmp;
+			}
+		}
+        // Si se ha llegado a result_dcha, se aprovecha que sabemos que la suma de result_dcha es la mayor
+        if (lim_dcha_tmp==result_dcha.first){
+            sum_tmp += suma_dcha;
+            if (sum_tmp>=sum_max){
+                result_central.second = result_dcha.second;
+                sum_max = sum_tmp;
+            }
+        }
 
-        //Combinacion de casos
+        // Se actualiza la suma de la subsecuencia central
+        int suma_central = sum_max;
 
-        suma_i=suma(v,result_i.first,result_i.second);
-        suma_d=suma(v,result_d.first,result_d.second);
-        suma_comb=suma(v,result_comb.first,result_comb.second);
 
-        if(suma_i>=suma_d){
-            result.first=result_i.first;
-            result.second=result_i.second;
-            suma_result=suma_i;
+        //Combinacion de casos. Me quedo con el caso mejor.
+        if(suma_izq>=suma_dcha){
+            result = result_izq;
+            suma_result=suma_izq;
         }
         else{
-            result.first=result_d.first;
-            result.second=result_d.second;
-            suma_result=suma_d;
+            result = result_dcha;
+            suma_result=suma_dcha;
         }
 
-        if(suma_comb>=suma_result){
-            result.first=result_comb.first;
-            result.second=result_comb.second;
+        if(suma_central>=suma_result){
+            result = result_central;
+            suma_result=suma_central;
         }
+
+        #ifdef DEBUG
+        // Imprimo los resultados parciales, para comprobar que el algoritmo funciona correctamente
+        cout << "Init: " << init << " Fin: " << fin << endl;
+        cout << "Secuencia: ";
+        for(int i=init; i<=fin; i++)
+            cout << v[i] << " ";
+        cout << endl;
+        cout << "Izq: " << result_izq.first << " " << result_izq.second << " " << suma_izq << endl;
+        cout << "Dcha: " << result_dcha.first << " " << result_dcha.second << " " << suma_dcha << endl;
+        cout << "Central: " << result_central.first << " " << result_central.second << " " << suma_central << endl;
+        cout << "Mejor: " << result.first << " " << result.second << " " << suma_result << endl;
+        cout << endl;
+        #endif
+
         return result;
     }
 }
 
-#endif
 
-#ifndef PAIR
-
-int SubsecSumaMax(const vector<int> , int init, int fin){
-    return 0;
-}
-
-#endif
 
 int main (int argc,char **argv){
     
@@ -100,7 +147,7 @@ int main (int argc,char **argv){
     }
 
     pair <int,int> result;
-    srandom(time(0));
+    srand(time(0));
 
     string file = argv[1];
     
