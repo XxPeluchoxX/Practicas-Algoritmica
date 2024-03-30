@@ -85,7 +85,7 @@ void calc_distancias(pair<int,int> *v, double **m, int n){
  * @param inf La primera ciudad de la lista que tenemos en cuenta.
  * @param sup La ultima ciudad de la lista que tenemos en cuenta.
  *
- * @return El vector con la permutacion del camino mas economico.
+ * @return El vector con los indices (ordinalidad) de las ciudades ordenadas según la permutacion del camino mas economico.
  */
 vector<int> mejor_camino(double **m, int inf, int sup){
     vector<int> perm;
@@ -115,7 +115,15 @@ vector<int> mejor_camino(double **m, int inf, int sup){
     return mejor_camino;
 }
 
-
+/**
+ * Imprime el contenido de v
+*/
+void print_v(vector<int> v){
+    vector<int>::iterator it;
+    for(it = v.begin(); it != v.end(); ++it){
+        cout << *it << " ";
+    }
+}
 
 /**
  * Programa principal
@@ -166,6 +174,8 @@ int main(int argc, char **argv){
     // Busco el mejor camino
     vector<int> mejor = mejor_camino(distancias, 0, n-1);
     //cout << min << endl;
+    
+    print_v(mejor);
 
     // Borramos la memoria dinamica
     deallocateM(distancias, n);
