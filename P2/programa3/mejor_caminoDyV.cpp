@@ -9,7 +9,6 @@
 using namespace std;
 
 
-
 /**
  * Reserva memoria para una matriz.
  *
@@ -22,8 +21,6 @@ void allocateM(double **m, int n){
         m[i] = new double[n];
     }
 }
-
-
 
 
 /**
@@ -108,7 +105,7 @@ void mejor_camino(double **m, vector<pair<int,int>> &v, int inf, int sup){
             min = loc_sum;
             mejor_camino = perm;
         }
-    }while (next_permutation(perm.begin()+1, perm.end())); 
+    }while (next_permutation(perm.begin(), perm.end())); 
 
     vector<pair<int,int>> tmp(sup-inf+1);
     
@@ -120,6 +117,32 @@ void mejor_camino(double **m, vector<pair<int,int>> &v, int inf, int sup){
         v[inf+i] = tmp[i];
     }
 
+}
+
+/**
+ * Calcula el camino mas economico que une sup - inf + 1 ciudades.
+ *
+ * @param m La matriz con las distancias entre las distintas ciudades.
+ * @param v Las ciudades. Parámetro de entrada y salida, se devuelve con las 
+ * ciudades ya ordenadas. 
+ * @param inf La primera ciudad de la lista que tenemos en cuenta.
+ * @param sup La ultima ciudad de la lista que tenemos en cuenta.
+*/
+void mejor_caminoDyV(double **m, vector<pair<int,int>> &v, int inf, int sup){
+    int n = sup - inf + 1;
+    if(n <= 3){
+        mejor_camino(m, v, inf, sup);
+    }else{
+        // Ordeno y obtengo mediana
+        sort(v.begin() + inf, v.begin() + sup + 1);
+        int k = (sup-inf)/2;
+        pair<int, int> pivote = v[k];
+
+        // Obtengo las soluciones a la izqda y a la dcha
+        mejor_caminoDyV(m, v, k, sup);
+        swap(v[inf], v[k]);
+        mejor_caminoDyV(m, v, inf, k);
+    }
 }
 
 /**
@@ -167,6 +190,8 @@ int main(int argc, char **argv){
         archivo >> ciudades[i].first >> ciudades[i].second;
     }
 
+    // ---------------------- Calculo de distancias --------------------------
+
     // Calculo las distancias
     double **distancias = nullptr;
     
@@ -178,9 +203,8 @@ int main(int argc, char **argv){
     
     calc_distancias(ciudades,distancias,n);
 
-    // Busco el mejor camino
-    mejor_camino(distancias, ciudades, 0, n-1);
-    //cout << min << endl;
+    // ---------------------- Cálculo del camino --------------------------
+    mejor_caminoDyV(distancias, ciudades, 0, n-1);
     
     print_v(ciudades);
 
