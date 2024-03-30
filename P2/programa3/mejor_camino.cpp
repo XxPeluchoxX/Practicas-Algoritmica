@@ -79,7 +79,7 @@ void calc_distancias(const vector<pair<int,int>> &v, double **m, int n){
 
 /**
  * Dadas sup - inf + 1 ciudades calcula el camino mas economico en cuanto a 
- * distancias. 
+ * distancias. La primera ciudad se queda la primera siempre.
  *
  * @param m La matriz con las distancias entre las distintas ciudades.
  * @param v Las ciudades. Parámetro de entrada y salida, se devuelve con las 
@@ -88,6 +88,9 @@ void calc_distancias(const vector<pair<int,int>> &v, double **m, int n){
  * @param sup La ultima ciudad de la lista que tenemos en cuenta.
  */
 void mejor_camino(double **m, vector<pair<int,int>> &v, int inf, int sup){
+    if (inf == sup || inf+1 == sup){
+        return;
+    }
     vector<int> perm;
     for(int i = inf; i <= sup; i++){
         perm.push_back(i); 
@@ -108,7 +111,7 @@ void mejor_camino(double **m, vector<pair<int,int>> &v, int inf, int sup){
             min = loc_sum;
             mejor_camino = perm;
         }
-    }while (next_permutation(perm.begin()+1, perm.end())); 
+    }while (next_permutation(perm.begin()++, perm.end())); 
 
     vector<pair<int,int>> tmp(sup-inf+1);
     
