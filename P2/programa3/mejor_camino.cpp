@@ -58,7 +58,7 @@ double dist(pair<int,int> p1, pair<int,int> p2){
  * @param m La matriz donde guardamos las distancias.
  * @param n El numero de ciudades.
  */
-void calc_distancias(pair<int,int> *v, double **m, int n){
+void calc_distancias(const vector<pair<int,int>> &v, double **m, int n){
     // Llenamos la diagonal de 0
     // en la diagonal se situa la distancia a la misma ciudad   
 
@@ -82,12 +82,12 @@ void calc_distancias(pair<int,int> *v, double **m, int n){
  * distancias. 
  *
  * @param m La matriz con las distancias entre las distintas ciudades.
+ * @param v Las ciudades. Parámetro de entrada y salida, se devuelve con las 
+ * ciudades ya ordenadas. 
  * @param inf La primera ciudad de la lista que tenemos en cuenta.
  * @param sup La ultima ciudad de la lista que tenemos en cuenta.
- *
- * @return El vector con los indices (ordinalidad) de las ciudades ordenadas según la permutacion del camino mas economico.
  */
-vector<int> mejor_camino(double **m, int inf, int sup){
+void mejor_camino(double **m, vector<pair<int,int>> &v, int inf, int sup){
     vector<int> perm;
     for(int i = inf; i <= sup; i++){
         perm.push_back(i); 
@@ -110,18 +110,25 @@ vector<int> mejor_camino(double **m, int inf, int sup){
         }
     }while (next_permutation(perm.begin(), perm.end())); 
 
-    //cout << "min " << min << endl;
+    vector<pair<int,int>> tmp(sup-inf+1);
+    
+    for(int i=0; i <= sup-inf; i++){
+        tmp[mejor_camino[i]] = v[inf+i];
+    }
 
-    return mejor_camino;
+    for(int i=0; i <= sup-inf; i++){
+        v[inf+i] = tmp[i];
+    }
+
 }
 
 /**
  * Imprime el contenido de v
 */
-void print_v(vector<int> v){
-    vector<int>::iterator it;
+void print_v(vector<pair<int,int>> v){
+    vector<pair<int,int>>::iterator it;
     for(it = v.begin(); it != v.end(); ++it){
-        cout << *it << " ";
+        cout << it->first << " " << it->second << endl;
     }
 }
 
@@ -154,7 +161,7 @@ int main(int argc, char **argv){
 
     archivo >> n;
 
-    pair<int,int> *ciudades = new pair<int,int>[n];
+    vector<pair<int,int>> ciudades(n); 
 
     for(int i=0; i < n; i++){
         archivo >> ciudades[i].first >> ciudades[i].second;
@@ -172,14 +179,13 @@ int main(int argc, char **argv){
     calc_distancias(ciudades,distancias,n);
 
     // Busco el mejor camino
-    vector<int> mejor = mejor_camino(distancias, 0, n-1);
+    mejor_camino(distancias, ciudades, 0, n-1);
     //cout << min << endl;
     
-    print_v(mejor);
+    print_v(ciudades);
 
     // Borramos la memoria dinamica
     deallocateM(distancias, n);
-    delete[] ciudades;
 
     return 0;
 }
