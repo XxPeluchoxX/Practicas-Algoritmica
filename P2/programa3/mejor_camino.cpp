@@ -88,40 +88,73 @@ void calc_distancias(const vector<pair<int,int>> &v, double **m, int n){
  * @param sup La ultima ciudad de la lista que tenemos en cuenta.
  */
 void mejor_camino(double **m, vector<pair<int,int>> &v, int inf, int sup){
+    //if (inf == sup || inf+1 == sup){
+        //return;
+    //}
+    //vector<int> perm;
+    //for(int i = inf; i <= sup; i++){
+        //perm.push_back(i); 
+    //}
+    //
+    //double min = DBL_MAX;
+    //vector<int> mejor_camino;
+    //
+    //// Para cada permutacion posible calculo la suma de todas las distancias    
+    //do{
+        //double loc_sum=0;   
+        //for(int i = 0; i < perm.size() -1; i++){
+            //loc_sum += m[perm[i]][perm[i+1]];
+        //}
+        //loc_sum += m[perm[0]][perm[perm.size()-1]];
+//
+        //if (loc_sum < min){
+            //min = loc_sum;
+            //mejor_camino = perm;
+        //}
+    //}while (next_permutation(perm.begin()++, perm.end())); 
+//
+    //vector<pair<int,int>> tmp(sup-inf+1);
+    //
+    //for(int i=0; i <= sup-inf; i++){
+        //tmp[mejor_camino[i]] = v[inf+i];
+    //}
+//
+    //for(int i=0; i <= sup-inf; i++){
+        //v[inf+i] = tmp[i];
+    //}
+//
+//
+//
+
     if (inf == sup || inf+1 == sup){
         return;
     }
-    vector<int> perm;
-    for(int i = inf; i <= sup; i++){
-        perm.push_back(i); 
-    }
-    
+
+    int n = sup - inf + 1;
     double min = DBL_MAX;
-    vector<int> mejor_camino;
-    
-    // Para cada permutacion posible calculo la suma de todas las distancias    
+    vector<pair<int, int>> perm;
+    for(int i = 0; i < sup - inf + 1; i++){
+        perm.push_back(v[inf + i]);
+    }
+
+    double sum = 0;
     do{
-        double loc_sum=0;   
-        for(int i = 0; i < perm.size() -1; i++){
-            loc_sum += m[perm[i]][perm[i+1]];
+        sum = 0;
+
+        for(int i = 0; i < n-1; i++){
+            sum += dist(perm[i], perm[i+1]);
         }
-        loc_sum += m[perm[0]][perm[perm.size()-1]];
 
-        if (loc_sum < min){
-            min = loc_sum;
-            mejor_camino = perm;
+        sum += dist(perm[n-1], perm[0]);
+
+        if(sum < min){
+            min = sum;
+            for(int i = inf; i <= sup; i++){
+                v[i] = perm[i-inf];
+            }
         }
-    }while (next_permutation(perm.begin()++, perm.end())); 
-
-    vector<pair<int,int>> tmp(sup-inf+1);
-    
-    for(int i=0; i <= sup-inf; i++){
-        tmp[mejor_camino[i]] = v[inf+i];
-    }
-
-    for(int i=0; i <= sup-inf; i++){
-        v[inf+i] = tmp[i];
-    }
+        
+    }while(next_permutation(perm.begin()+1, perm.end()));
 
 }
 

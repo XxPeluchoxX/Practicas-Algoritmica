@@ -6,7 +6,11 @@
 #include <vector> 
 #include <limits> 
 #include <cfloat> 
+
+#include <unistd.h>
+
 using namespace std;
+
 
 
 /**
@@ -21,6 +25,8 @@ void allocateM(double **m, int n){
         m[i] = new double[n];
     }
 }
+
+
 
 
 /**
@@ -76,7 +82,7 @@ void calc_distancias(const vector<pair<int,int>> &v, double **m, int n){
 
 /**
  * Dadas sup - inf + 1 ciudades calcula el camino mas economico en cuanto a 
- * distancias. 
+ * distancias. La primera ciudad se queda la primera siempre.
  *
  * @param m La matriz con las distancias entre las distintas ciudades.
  * @param v Las ciudades. Parámetro de entrada y salida, se devuelve con las 
@@ -84,64 +90,103 @@ void calc_distancias(const vector<pair<int,int>> &v, double **m, int n){
  * @param inf La primera ciudad de la lista que tenemos en cuenta.
  * @param sup La ultima ciudad de la lista que tenemos en cuenta.
  */
-void mejor_camino(double **m, vector<pair<int,int>> &v, int inf, int sup){
-    vector<int> perm;
-    for(int i = inf; i <= sup; i++){
-        perm.push_back(i); 
+void mejor_camino(vector<pair<int,int>> &v, int inf, int sup){
+    if (inf == sup || inf+1 == sup){
+        return;
     }
-    
+
+    int n = sup - inf + 1;
     double min = DBL_MAX;
-    vector<int> mejor_camino;
-    
-    // Para cada permutacion posible calculo la suma de todas las distancias    
+    vector<pair<int, int>> perm;
+    for(int i = 0; i < sup - inf + 1; i++){
+        perm.push_back(v[inf + i]);
+    }
+
+    double sum = 0;
     do{
-        double loc_sum=0;   
-        for(int i = 0; i < perm.size() -1; i++){
-            loc_sum += m[perm[i]][perm[i+1]];
+        sum = 0;
+
+        for(int i = 0; i < n-1; i++){
+            sum += dist(perm[i], perm[i+1]);
         }
-        loc_sum += m[perm[0]][perm[perm.size()-1]];
 
-        if (loc_sum < min){
-            min = loc_sum;
-            mejor_camino = perm;
+        sum += dist(perm[n-1], perm[0]);
+
+        if(sum < min){
+            min = sum;
+            for(int i = inf; i <= sup; i++){
+                v[i] = perm[i-inf];
+            }
         }
-    }while (next_permutation(perm.begin(), perm.end())); 
-
-    vector<pair<int,int>> tmp(sup-inf+1);
-    
-    for(int i=0; i <= sup-inf; i++){
-        tmp[mejor_camino[i]] = v[inf+i];
-    }
-
-    for(int i=0; i <= sup-inf; i++){
-        v[inf+i] = tmp[i];
-    }
-
+        
+    }while(next_permutation(perm.begin()+1, perm.end()));
 }
 
-/**
- * Calcula el camino mas economico que une sup - inf + 1 ciudades.
- *
- * @param m La matriz con las distancias entre las distintas ciudades.
- * @param v Las ciudades. Parámetro de entrada y salida, se devuelve con las 
- * ciudades ya ordenadas. 
- * @param inf La primera ciudad de la lista que tenemos en cuenta.
- * @param sup La ultima ciudad de la lista que tenemos en cuenta.
-*/
-void mejor_caminoDyV(double **m, vector<pair<int,int>> &v, int inf, int sup){
-    int n = sup - inf + 1;
-    if(n <= 3){
-        mejor_camino(m, v, inf, sup);
-    }else{
-        // Ordeno y obtengo mediana
-        sort(v.begin() + inf, v.begin() + sup + 1);
-        int k = (sup-inf)/2;
-        pair<int, int> pivote = v[k];
+// resul : saca abcd
+// a1, a2: izqda
+// b1, b2: dcha
+void funcion(pair<int, int>* resul, pair<int, int> a1, pair<int, int> a2, pair<int, int> b1, pair<int, int> b2, pair<int, int> p){
+    // calculo 4 posibilidades
+    double d1 = dist(a1, p) + dist(p, b1) + dist(a2, b2);
+    double d2 = dist(a1, p) + dist(p, b2) + dist(a2, b1);
+    double d3 = dist(a2, p) + dist(p, b1) + dist(a1, b2);
+    double d4 = dist(a2, p) + dist(p, b2) + dist(a1, b1);
 
-        // Obtengo las soluciones a la izqda y a la dcha
-        mejor_caminoDyV(m, v, k, sup);
+    if(d1 <= d2 && d1 <= d3 && d1 <= d4){
+        resul[0] = a1;
+        resul[1] = b2;
+    }else if(d2 <= d1 && d2 <= d3 && d2 <= d4){
+        resul[0] = a1;
+        resul[1] = b1;
+    }else if(d3 <= d1 && d3 <= d2 && d3 <= d4){
+        resul[0] = a2;
+        resul[1] = b2;
+    }else{
+        resul[0] = a2;
+        resul[1] = b1;
+    }
+}
+
+void intercambia(vector<pair<int, int>>& v, pair<int, int>* resul, int inf, int sup, int k){
+    if(v[inf+1] != resul[0]){ // i+1 != a
+        reverse(v.begin() + inf+1, v.begin() + k + 1);
+    }
+    if(v[k+1] != resul[1]){ // k+1 != c
+        reverse(v.begin() + k+1, v.begin() + sup + 1);
+    }
+}
+
+bool functor(const pair<int, int> &a, const pair<int, int> &b) {
+    return a.second < b.second;
+}
+
+void ordena(vector<pair<int,int>> &v, bool sort_by_x){
+    if(sort_by_x){
+        sort(v.begin(), v.end());
+    }else{
+        sort(v.begin(), v.end(), functor);
+    }
+}
+
+// Calcular distancias en brute force
+void mejor_caminoDyV(vector<pair<int,int>> &v, int inf, int sup, bool sort_by_x){
+    if(sup - inf + 1 <= 5){
+        mejor_camino(v, inf, sup);
+    }else{
+        ordena(v, sort_by_x);
+        int k = inf + (sup - inf+1)/2;
+        sleep(1);
+
+        mejor_caminoDyV(v, k, sup, !sort_by_x);
+        //pair<int, int> aux = v[inf];
+        //v[inf] = v[k];
+        //v[k] = aux;
         swap(v[inf], v[k]);
-        mejor_caminoDyV(m, v, inf, k);
+        mejor_caminoDyV(v, inf, k, !sort_by_x);
+
+        pair<int, int> vect[2];
+        funcion(vect, v[inf+1], v[k], v[k+1], v[sup], v[inf]);
+        intercambia(v, vect, inf, sup, k);
     }
 }
 
@@ -190,26 +235,11 @@ int main(int argc, char **argv){
         archivo >> ciudades[i].first >> ciudades[i].second;
     }
 
-    // ---------------------- Calculo de distancias --------------------------
-
-    // Calculo las distancias
-    double **distancias = nullptr;
-    
-    //allocateM(distancias, n);
-    distancias = new double*[n];
-    for(int i=0; i < n; i++){
-        distancias[i] = new double[n];
-    }
-    
-    calc_distancias(ciudades,distancias,n);
-
-    // ---------------------- Cálculo del camino --------------------------
-    mejor_caminoDyV(distancias, ciudades, 0, n-1);
+    // Busco el mejor camino
+    sort(ciudades.begin(), ciudades.end());
+    mejor_caminoDyV(ciudades, 0, n-1, true);
     
     print_v(ciudades);
-
-    // Borramos la memoria dinamica
-    deallocateM(distancias, n);
 
     return 0;
 }
