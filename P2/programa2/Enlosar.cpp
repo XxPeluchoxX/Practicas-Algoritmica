@@ -42,10 +42,10 @@ void Enlosar(unsigned int **M, int n, int row, int col, int first_row, int first
 
     // Solo si n > 1
 
-    bool lower_right = lower && right;
-    bool lower_left = lower && !right;
-    bool upper_right = !lower && right;
-    bool upper_left = !(lower || right);
+    // bool lower_right = lower && right;
+    // bool lower_left = lower && !right;
+    // bool upper_right = !lower && right;
+    // bool upper_left = !(lower || right);
 
 
     // Enlosar(M,n-1,row*upper_left + !upper_left *(first_row + middle-1),col*upper_left + !upper_left *(first_col + middle-1),first_row,        first_col       );
