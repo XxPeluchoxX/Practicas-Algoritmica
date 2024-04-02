@@ -11,38 +11,6 @@
 
 using namespace std;
 
-
-
-/**
- * Reserva memoria para una matriz.
- *
- * @param m La matriz en la que queremos reservar memoria.
- * @param n El tamaño de la matriz.
- */
-void allocateM(double **m, int n){
-    m = new double*[n];
-    for(int i=0; i < n; i++){
-        m[i] = new double[n];
-    }
-}
-
-
-
-
-/**
- * Borra la memoria dinamica de la matriz pasada como parametro.
- * 
- * @param m La matriz a borrar.
- * @param n El tamaño de la matriz.
- */
-void deallocateM(double **m, int n){
-    for(int i=0; i < n; i++){
-        delete[] m[i];
-    }
-    delete[] m;
-}
-
-
 /**
  * Calcula la distancia euclidea entre dos puntos en el plano.
  *
@@ -52,33 +20,6 @@ void deallocateM(double **m, int n){
 double dist(pair<int,int> p1, pair<int,int> p2){
     return sqrt((p1.first - p2.first)*(p1.first - p2.first) + (p1.second - p2.second)*(p1.second - p2.second));
 }
-
-
-/**
- * Dadas n ciudades calcula la distancia entre cada par de ellas guardando
- * las distancias en una matriz nxn.
- * @param v El vector de puntos con las ciudades.
- * @param m La matriz donde guardamos las distancias.
- * @param n El numero de ciudades.
- */
-void calc_distancias(const vector<pair<int,int>> &v, double **m, int n){
-    // Llenamos la diagonal de 0
-    // en la diagonal se situa la distancia a la misma ciudad   
-
-    for(int i=0; i < n; i++){
-        m[i][i] = 0;
-    }
-    
-    // Calculando solo una vez la distancia llenamos el m[i][j], m[j][i]
-
-    for(int i = 1; i < n ; i++){
-        for(int j = 0; j < i; j++){
-            m[i][j] = dist(v[i], v[j]);
-            m[j][i] = m[i][j];
-        }
-    }
-}
-
 
 /**
  * Dadas sup - inf + 1 ciudades calcula el camino mas economico en cuanto a 
@@ -160,54 +101,83 @@ bool functor(const pair<int, int> &a, const pair<int, int> &b) {
     return a.second < b.second;
 }
 
-void ordena(vector<pair<int,int>> &v, bool sort_by_x){
+void ordena(vector<pair<int,int>> &v, int inf, int sup, bool sort_by_x){
     if(sort_by_x){
-        sort(v.begin(), v.end());
+        sort(v.begin() + inf, v.begin() + sup + 1); // [inf, sup]
     }else{
-        sort(v.begin(), v.end(), functor);
+        sort(v.begin() + inf, v.begin() + sup + 1, functor);    // [inf, sup]
     }
 }
 
-// Calcular distancias en brute force
-void mejor_caminoDyV2(vector<pair<int,int>> &v, int inf, int sup, bool sort_by_x){
-    if(sup - inf + 1 <= 5){
-        mejor_camino(v, inf, sup);
-    }else{
-        ordena(v, sort_by_x);
-        int k = inf + (sup - inf+1)/2;
-        sleep(1);
-
-        mejor_caminoDyV2(v, k, sup, !sort_by_x);
-        //pair<int, int> aux = v[inf];
-        //v[inf] = v[k];
-        //v[k] = aux;
-        swap(v[inf], v[k]);
-        mejor_caminoDyV2(v, inf, k, !sort_by_x);
-
-        pair<int, int> vect[2];
-        funcion(vect, v[inf+1], v[k], v[k+1], v[sup], v[inf]);
-        intercambia(v, vect, inf, sup, k);
+void rota(vector<pair<int, int>> &v, int inf, int sup){
+    pair<int, int> primero = v[inf];
+    for(int i = inf; i < sup; i++){
+        v[i] = v[i+1];
     }
+
+    v[sup] = primero;
 }
 
 // Calcular distancias en brute force
 void mejor_caminoDyV(vector<pair<int,int>> &v, int inf, int sup, bool sort_by_x){
-    if(sup - inf + 1 <= 5){
+    if(sup - inf + 1 <= 8){
         mejor_camino(v, inf, sup);
     }else{
-        ordena(v, sort_by_x);
+        pair<int, int> old_pivote = v[inf];
+        ordena(v, inf, sup, sort_by_x);
         int k = inf + (sup - inf+1)/2;
-        sleep(1);
+
+        //
+        //cout << "Imprimo vector" << endl;
+        //for(int i = inf; i <= sup; i++){
+            //cout << v[i].first << " " << v[i].second << endl;
+        //}
+        //cout << "Pivote: " << v[k].first << " " << v[k].second << endl;
+        //
 
         mejor_caminoDyV(v, k, sup, !sort_by_x);
 
-        reverse(v.begin() + inf, v.begin() + k + 1);
+        swap(v[inf], v[k]);
         mejor_caminoDyV(v, inf, k, !sort_by_x);
         reverse(v.begin() + inf, v.begin() + k + 1);
 
+        //
+        //cout << "Mejor camino dcha:" << endl;
+        //for(int i = k; i <= sup; i++){
+            //cout << v[i].first << " " << v[i].second << endl;
+        //}
+        //cout << "hola" << endl;
+        //cout << "Mejor camino izqda:" << endl;
+        //for(int i = inf; i <= k; i++){
+            //cout << v[i].first << " " << v[i].second << endl;
+        //}
+        //cout << "hola" << endl;
+        //
+
         pair<int, int> vect[2];
-        funcion(vect, v[inf], v[k-1], v[k+1], v[sup], v[inf]);
+        funcion(vect, v[inf], v[k-1], v[k+1], v[sup], v[k]);
         intercambia(v, vect, inf, sup, k);
+
+        //
+        //cout << "Mejor camino con pivote centrado" << endl;
+        //for(int i = inf; i <= sup; i++){
+            //cout << v[i].first << " " << v[i].second << endl;
+        //}
+        //cout << "hola" << endl;
+        //
+
+        // vuelvo a old_pivote en posición 0
+        while(v[inf] != old_pivote){
+            rota(v, inf, sup);
+        }
+
+        //
+        //cout << "Mejor camino con pivote inicial" << endl;
+        //for(int i = inf; i <= sup; i++){
+            //cout << v[i].first << " " << v[i].second << endl;
+        //}
+        //cout << "hola" << endl;
+        //
     }
 }
 
@@ -247,9 +217,7 @@ int main(int argc, char **argv){
 
     // Lectura del archivo
     int n, x, y;
-
     archivo >> n;
-
     vector<pair<int,int>> ciudades(n); 
 
     for(int i=0; i < n; i++){
@@ -260,6 +228,7 @@ int main(int argc, char **argv){
     sort(ciudades.begin(), ciudades.end());
     mejor_caminoDyV(ciudades, 0, n-1, true);
     
+    ciudades.push_back(ciudades[0]);
     print_v(ciudades);
 
     return 0;
