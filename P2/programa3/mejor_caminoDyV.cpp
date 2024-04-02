@@ -148,11 +148,11 @@ void funcion(pair<int, int>* resul, pair<int, int> a1, pair<int, int> a2, pair<i
 }
 
 void intercambia(vector<pair<int, int>>& v, pair<int, int>* resul, int inf, int sup, int k){
-    if(v[inf+1] != resul[0]){ // i+1 != a
-        reverse(v.begin() + inf+1, v.begin() + k + 1);
+    if(v[inf] == resul[0]){ // i == a
+        reverse(v.begin() + inf, v.begin() + k);  // revertir [inf, k[
     }
-    if(v[k+1] != resul[1]){ // k+1 != c
-        reverse(v.begin() + k+1, v.begin() + sup + 1);
+    if(v[k+1] == resul[1]){ // k+1 == c
+        reverse(v.begin() + k+1, v.begin() + sup + 1);   // revertir [k+1, s]
     }
 }
 
@@ -169,6 +169,28 @@ void ordena(vector<pair<int,int>> &v, bool sort_by_x){
 }
 
 // Calcular distancias en brute force
+void mejor_caminoDyV2(vector<pair<int,int>> &v, int inf, int sup, bool sort_by_x){
+    if(sup - inf + 1 <= 5){
+        mejor_camino(v, inf, sup);
+    }else{
+        ordena(v, sort_by_x);
+        int k = inf + (sup - inf+1)/2;
+        sleep(1);
+
+        mejor_caminoDyV2(v, k, sup, !sort_by_x);
+        //pair<int, int> aux = v[inf];
+        //v[inf] = v[k];
+        //v[k] = aux;
+        swap(v[inf], v[k]);
+        mejor_caminoDyV2(v, inf, k, !sort_by_x);
+
+        pair<int, int> vect[2];
+        funcion(vect, v[inf+1], v[k], v[k+1], v[sup], v[inf]);
+        intercambia(v, vect, inf, sup, k);
+    }
+}
+
+// Calcular distancias en brute force
 void mejor_caminoDyV(vector<pair<int,int>> &v, int inf, int sup, bool sort_by_x){
     if(sup - inf + 1 <= 5){
         mejor_camino(v, inf, sup);
@@ -178,14 +200,13 @@ void mejor_caminoDyV(vector<pair<int,int>> &v, int inf, int sup, bool sort_by_x)
         sleep(1);
 
         mejor_caminoDyV(v, k, sup, !sort_by_x);
-        //pair<int, int> aux = v[inf];
-        //v[inf] = v[k];
-        //v[k] = aux;
-        swap(v[inf], v[k]);
+
+        reverse(v.begin() + inf, v.begin() + k + 1);
         mejor_caminoDyV(v, inf, k, !sort_by_x);
+        reverse(v.begin() + inf, v.begin() + k + 1);
 
         pair<int, int> vect[2];
-        funcion(vect, v[inf+1], v[k], v[k+1], v[sup], v[inf]);
+        funcion(vect, v[inf], v[k-1], v[k+1], v[sup], v[inf]);
         intercambia(v, vect, inf, sup, k);
     }
 }
