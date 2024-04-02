@@ -1,11 +1,11 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
-#include <limits>
 #include <vector>
 
 using namespace std;
 
+// Funcion para calcular la distancia entre dos puntos
 double dist(pair<int,int> p1, pair<int,int> p2){
     return sqrt((p1.first - p2.first)*(p1.first - p2.first) + (p1.second - p2.second)*(p1.second - p2.second));
 }
@@ -29,7 +29,11 @@ int main(int argc, char **argv){
         archivo >> ciudades[i].first >> ciudades[i].second;
     }
 
-    double sum = dist(ciudades[0], ciudades[n-1]);
+    archivo.close();
+
+
+    // Calculo de la distancia
+    double sum = dist(ciudades[0], ciudades[n-1]); // Distancia entre la primera y la ultima ciudad, cerrando el ciclo
     for(int i = 0; i < n-1; i++){
         sum += dist(ciudades[i], ciudades[i+1]);
     }
