@@ -123,61 +123,30 @@ void mejor_caminoDyV(vector<pair<int,int>> &v, int inf, int sup, bool sort_by_x)
     if(sup - inf + 1 <= 8){
         mejor_camino(v, inf, sup);
     }else{
+        // Guardo anterior vector
         pair<int, int> old_pivote = v[inf];
+
+        // ordenamos y cogemos la mediana
         ordena(v, inf, sup, sort_by_x);
         int k = inf + (sup - inf+1)/2;
 
-        //
-        //cout << "Imprimo vector" << endl;
-        //for(int i = inf; i <= sup; i++){
-            //cout << v[i].first << " " << v[i].second << endl;
-        //}
-        //cout << "Pivote: " << v[k].first << " " << v[k].second << endl;
-        //
-
+        // [k, sup]
         mejor_caminoDyV(v, k, sup, !sort_by_x);
 
+        // [inf, k] con el pivote al inicio
         swap(v[inf], v[k]);
         mejor_caminoDyV(v, inf, k, !sort_by_x);
-        reverse(v.begin() + inf, v.begin() + k + 1);
+        reverse(v.begin() + inf, v.begin() + k + 1); // ponemos el pivote en k
 
-        //
-        //cout << "Mejor camino dcha:" << endl;
-        //for(int i = k; i <= sup; i++){
-            //cout << v[i].first << " " << v[i].second << endl;
-        //}
-        //cout << "hola" << endl;
-        //cout << "Mejor camino izqda:" << endl;
-        //for(int i = inf; i <= k; i++){
-            //cout << v[i].first << " " << v[i].second << endl;
-        //}
-        //cout << "hola" << endl;
-        //
-
+        // Obtenemos el array bien ordenado
         pair<int, int> vect[2];
         funcion(vect, v[inf], v[k-1], v[k+1], v[sup], v[k]);
         intercambia(v, vect, inf, sup, k);
 
-        //
-        //cout << "Mejor camino con pivote centrado" << endl;
-        //for(int i = inf; i <= sup; i++){
-            //cout << v[i].first << " " << v[i].second << endl;
-        //}
-        //cout << "hola" << endl;
-        //
-
-        // vuelvo a old_pivote en posición 0
+        // Devuelvo la solucion con el pivote antiguo en inf
         while(v[inf] != old_pivote){
             rota(v, inf, sup);
         }
-
-        //
-        //cout << "Mejor camino con pivote inicial" << endl;
-        //for(int i = inf; i <= sup; i++){
-            //cout << v[i].first << " " << v[i].second << endl;
-        //}
-        //cout << "hola" << endl;
-        //
     }
 }
 
@@ -228,6 +197,7 @@ int main(int argc, char **argv){
     sort(ciudades.begin(), ciudades.end());
     mejor_caminoDyV(ciudades, 0, n-1, true);
     
+    // Añadimos la primera ciudad (volver a ella)
     ciudades.push_back(ciudades[0]);
     print_v(ciudades);
 
