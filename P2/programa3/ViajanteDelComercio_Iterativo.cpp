@@ -13,74 +13,83 @@ using namespace std;
 using namespace std::chrono;
 
 
-
-
-
 /**
- * Calcula la distancia euclidea entre dos puntos en el plano.
+ * @brief Calcula la distancia euclidea entre dos puntos en el plano.
  *
  * @param p1 El primer punto.
  * @param p2 El segundo punto.
  */
 double dist(pair<int,int> p1, pair<int,int> p2){
-    return sqrt((p1.first - p2.first)*(p1.first - p2.first) + (p1.second - p2.second)*(p1.second - p2.second));
+    int diff_x = p1.first - p2.first;
+    int diff_y = p1.second - p2.second;
+    return sqrt(diff_x*diff_x + diff_y*diff_y);
 }
 
 
 
 
 /**
- * Dadas sup - inf + 1 ciudades calcula el camino mas economico en cuanto a 
+ * @brief Dadas sup - inf + 1 ciudades calcula el camino mas economico en cuanto a 
  * distancias. La primera ciudad se queda la primera siempre.
  *
- * @param m La matriz con las distancias entre las distintas ciudades.
  * @param v Las ciudades. Parámetro de entrada y salida, se devuelve con las 
  * ciudades ya ordenadas. 
  * @param inf La primera ciudad de la lista que tenemos en cuenta.
  * @param sup La ultima ciudad de la lista que tenemos en cuenta.
  */
-void mejor_camino(vector<pair<int,int>> &v, int inf, int sup){
-    if (inf == sup || inf+1 == sup){
+void mejor_camino_Iterativo(vector<pair<int,int>> &v, int inf, int sup){
+    if (inf >= sup){ // Caso base, no hay ciudades que considerar
         return;
     }
 
-    int n = sup - inf + 1;
-    double min = DBL_MAX;
-    vector<pair<int, int>> perm;
-    for(int i = 0; i < sup - inf + 1; i++){
+    int n = sup - inf + 1;  // Número de ciudades que consideramos
+    double min = DBL_MAX;   // Distancia mínima inicial. La inicializamos a un valor muy grande para que cualquier distancia sea menor
+
+    vector<pair<int, int>> perm; // Lista de las ciudades que vamos a considerar
+
+    // Almacena en perm las ciudades que vamos a considerar. Permutación inicial
+    for(int i = 0; i < n; i++){
         perm.push_back(v[inf + i]);
     }
 
-    double sum = 0;
+    double sum = 0; // Suma de las distancias de la permutación actual
     do{
         sum = 0;
 
+        // Contabilizamos todas las distancias de la permutación actual
         for(int i = 0; i < n-1; i++){
             sum += dist(perm[i], perm[i+1]);
         }
+        sum += dist(perm[n-1], perm[0]); // Cierre del camino
 
-        sum += dist(perm[n-1], perm[0]);
-
+        // Si la suma de distancias de la permutación actual es menor que la mínima encontrada hasta ahora, se actualiza
         if(sum < min){
-            min = sum;
-            for(int i = inf; i <= sup; i++){
+            min = sum;      // Actualiza la distancia mínima
+            for(int i = inf; i <= sup; i++){ // Actualiza el vector de ciudades para ponerlo en el orden de la permutación actual
                 v[i] = perm[i-inf];
             }
         }
         
-    }while(next_permutation(perm.begin()+1, perm.end()));
+    }while(next_permutation(perm.begin()+1, perm.end()));   // Genera la siguiente permutación, sin contabilizar la primera ciudad
 
 }
 
+
 /**
- * Imprime el contenido de v
-*/
-void print_v(vector<pair<int,int>> v, ofstream &os){
+ * @brief Sobrecarga del operador << para imprimir un vector de pares de enteros
+ * 
+ * @param os Flujo de salida
+ * @param v Vector de pares de enteros
+ * @return ostream& Referencia al flujo de salida
+ */
+ostream& operator<<(ostream &os, vector<pair<int,int>> v){
     vector<pair<int,int>>::iterator it;
     for(it = v.begin(); it != v.end(); ++it){
         os << it->first << " " << it->second << endl;
     }
+    return os;
 }
+
 
 /**
  * Programa principal
@@ -105,12 +114,14 @@ int main(int argc, char **argv){
     }    
 
 
+    // Apertura del archivo de entrada
     ifstream entrada(argv[1]);
     if (!entrada.is_open()){
         cout << "Error al abrir el archivo de entrada\n";
         return 1;
     }
     
+    // Apertura del archivo de salida
     ofstream salida(argv[2]);
     if (!salida.is_open()){
         cout << "No se puede abrir el archivo de salida\n"; 
@@ -120,30 +131,31 @@ int main(int argc, char **argv){
     // Lectura del archivo
     int n;
     entrada >> n;
-    vector<pair<int,int>> ciudades(n); 
+    vector<pair<int,int>> ciudades(n);
 
     for(int i=0; i < n; i++){
         entrada >> ciudades[i].first >> ciudades[i].second;
     }
+    entrada.close();
 
     high_resolution_clock::time_point tantes, tdespues;
     duration<double> transcurrido;
 
     // Busco el mejor camino
-
     tantes = high_resolution_clock::now();
-    mejor_camino(ciudades, 0, n-1);
+    mejor_camino_Iterativo(ciudades, 0, n-1);
     tdespues = high_resolution_clock::now();
     
     transcurrido = duration_cast<duration<double>>(tdespues - tantes);
 
-    // Doy la salida de tiempo
-    cout << n << " " << transcurrido.count() << endl;
-
-
     // Añadimos la primera ciudad (volver a ella)
     ciudades.push_back(ciudades[0]);
-    print_v(ciudades, salida);
+
+    // Salida. Imprimimos el tiempo y las ciudades por orden
+    cout << n << " " << transcurrido.count() << endl;
+    salida << ciudades;
+
+    salida.close();
 
     return 0;
 }
