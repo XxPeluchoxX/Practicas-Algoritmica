@@ -153,7 +153,7 @@ pair<int,int> subsecMax_DyV (const vector<int> &v, int init, int fin){
 /**
  * Programa principal
  *
- * Uso: ejecutable <entrada> <salida>
+ * Uso: ejecutable <entrada> [<salida>]
  * Formato de la entrada:
  * n 
  * x x x x ...
@@ -161,22 +161,22 @@ pair<int,int> subsecMax_DyV (const vector<int> &v, int init, int fin){
 int main (int argc,char **argv){
     
     if(argc!=3 || argc != 2){
-        cout << " ./ejecutable <entrada> <salida>";
+        cout << " ./ejecutable <entrada> [<salida>]";
         return 1;
     }
 
     pair <int,int> result;
     int tam;
 
-    ifstream input(argv[1]);
-    
+    // Apertura del archivo de entrada
+    ifstream input(argv[1]);    
     if(!input){
         cout << "No se pudo abrir el archivo de entrada\n";
         return 1;
     }
 
+    // Apertura del archivo de salida
     ofstream output;
-
     if (argc == 3){
         output.open(argv[2]);
         if (!output.is_open()){
@@ -185,11 +185,13 @@ int main (int argc,char **argv){
         }
     }
 
+    // Lectura de los datos de entrada
     input >> tam;
     vector <int> v(tam);
     for (int i=0; i<tam; ++i){
         input>>v[i];
     }
+    input.close();
 
 
     high_resolution_clock::time_point tantes, tdespues;
@@ -200,12 +202,12 @@ int main (int argc,char **argv){
     tdespues = chrono::high_resolution_clock::now();
 
     transcurrido = duration_cast <duration<double>> (tdespues-tantes);
-
-    input.close();
     
 
+    // Salida.
+    // En pantalla se muestra el tamaño del problema y el tiempo de ejecución
+    // En el archivo de salida (si se proporciona) se muestra el resultado
     cout << tam << " " << transcurrido.count() << endl;
-
     if (argc == 3){
         output << result.first << " " << result.second << endl; 
         output.close();
