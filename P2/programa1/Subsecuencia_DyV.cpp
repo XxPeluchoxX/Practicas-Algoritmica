@@ -4,8 +4,9 @@
 #include <chrono>
 #include <random>
 #include <utility>
-
+#include <ctime> 
 using namespace std;
+using namespace std::chrono;
 
 
 /**
@@ -149,71 +150,69 @@ pair<int,int> subsecMax_DyV (const vector<int> &v, int init, int fin){
 
 
 
+/**
+ * Programa principal
+ *
+ * Uso: ejecutable <entrada> <salida>
+ * Formato de la entrada:
+ * n 
+ * x x x x ...
+ */
 int main (int argc,char **argv){
     
-    if(argc!=2){
-        cout << " ./ejecutable <FILE>";
+    if(argc!=3 || argc != 2){
+        cout << " ./ejecutable <entrada> <salida>";
         return 1;
     }
 
     pair <int,int> result;
-    srand(time(0));
-
-    string file = argv[1];
-    
-    chrono::high_resolution_clock::time_point tantes, tdespues;
-    chrono::duration<double> transcurrido;
     int tam;
 
-    ifstream input(file);
+    ifstream input(argv[1]);
     
     if(!input){
-        cout << "File" + file + "not found. Couldn't be opened.";
+        cout << "No se pudo abrir el archivo de entrada\n";
+        return 1;
     }
 
-    else {
-        input >> tam;
-        vector <int> v;
-        int dato;
-        for (int i=0; i<tam; ++i){
-            input>>dato;
-            v.push_back(dato);
+    ofstream output;
+
+    if (argc == 3){
+        output.open(argv[2]);
+        if (!output.is_open()){
+            cout << "No se pudo abrir el archivo de salida\n";
+            return 1;
         }
-
-        tantes= chrono::high_resolution_clock::now();
-
-        result = subsecMax_DyV(v,0,v.size()-1);
-
-        tdespues = chrono::high_resolution_clock::now();
-
-        transcurrido = chrono::duration_cast <chrono::duration<double>> (tdespues-tantes);
     }
+
+    input >> tam;
+    vector <int> v(tam);
+    for (int i=0; i<tam; ++i){
+        input>>v[i];
+    }
+
+
+    high_resolution_clock::time_point tantes, tdespues;
+    duration<double> transcurrido;
+
+    tantes= chrono::high_resolution_clock::now();
+    result = subsecMax_DyV(v,0,v.size()-1);
+    tdespues = chrono::high_resolution_clock::now();
+
+    transcurrido = duration_cast <duration<double>> (tdespues-tantes);
+
     input.close();
+    
 
-    //Salida
-    //file=argv[2];
-    //ofstream output(file);
-//
-    //if(!output){
-        //cout << "File" + file + "not found. Couldn't be opened.";
-    //}
-    //else{
-        //output << result.first << " " << result.second;
-    //}
-    //output.close();
-    //file=argv[3];
-    //output.open(file);
-//
-    //if(!output){
-        //cout << "File" + file + "not found. Couldn't be opened.";
-    //}
-    //else{
-        //output << tam << " " << transcurrido.count() << endl;
-    //}
-    //output.close();
-    //
     cout << tam << " " << transcurrido.count() << endl;
-    cout << result.first << " " << result.second;
-    return 0;
 
+    if (argc == 3){
+        output << result.first << " " << result.second << endl; 
+        output.close();
+    } else{
+        cout << result.first << " " << result.second;
+    }
+    
+
+    return 0;
 }

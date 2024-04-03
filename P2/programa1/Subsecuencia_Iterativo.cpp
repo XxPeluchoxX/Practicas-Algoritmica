@@ -2,8 +2,12 @@
 #include <random>
 #include <utility>
 #include <vector>
+#include <chrono> 
+#include <ctime> 
+#include <fstream> 
 
 using namespace std;
+using namespace std::chrono;
 
 
 /**
@@ -37,7 +41,7 @@ int suma(const vector<int> & v, int init, int fin){
  * @param fin  Posicion final
  * @return pair<int,int>  Par de enteros que representan la posicion inicial y final de la subsecuencia maxima
  */
-pair<int,int> subsecMax_Itertivo (const vector<int> &v, int init, int fin){
+pair<int,int> subsecMax_Iterativo (const vector<int> &v, int init, int fin){
 
     // Variables para almacenar la subsecuencia maxima local
     int localini=0, localfin=0, localmax=0;
@@ -75,16 +79,70 @@ pair<int,int> subsecMax_Itertivo (const vector<int> &v, int init, int fin){
 
 }
 
-int main(){
-    const vector<int> v = {1,2,40,-50,7,-10,4,20,  30,-11,-1,0,0,0,-200,40};
 
-
-    for(int i=0; i<v.size(); ++i){
-        cout << v[i] << " ";
+/**
+ * Programa principal
+ *
+ * Uso: ejecutable <entrada> <salida>
+ * Formato de la entrada:
+ * n 
+ * x x x x ...
+ */
+int main (int argc,char **argv){
+    
+    if(argc!=3 || argc != 2){
+        cout << " ./ejecutable <entrada> <salida>";
+        return 1;
     }
-    cout << endl;
 
-    pair<int,int> bounds_max = subsecMax_Itertivo(v,0, v.size()-1);
-    cout << suma(v, bounds_max.first, bounds_max.second) << "   " << bounds_max.first << " " << bounds_max.second << endl;
+    pair <int,int> result;
+    int tam;
+
+    ifstream input(argv[1]);
+    
+    if(!input){
+        cout << "No se pudo abrir el archivo de entrada\n";
+        return 1;
+    }
+
+    ofstream output;
+
+    if (argc == 3){
+        output.open(argv[2]);
+        if (!output.is_open()){
+            cout << "No se pudo abrir el archivo de salida\n";
+            return 1;
+        }
+    }
+
+    input >> tam;
+    vector <int> v(tam);
+    for (int i=0; i<tam; ++i){
+        input>>v[i];
+    }
+
+
+    high_resolution_clock::time_point tantes, tdespues;
+    duration<double> transcurrido;
+
+    tantes= chrono::high_resolution_clock::now();
+    result = subsecMax_Iterativo(v,0,v.size()-1);
+    tdespues = chrono::high_resolution_clock::now();
+
+    transcurrido = duration_cast <duration<double>> (tdespues-tantes);
+
+    input.close();
+    
+
+    cout << tam << " " << transcurrido.count() << endl;
+
+    if (argc == 3){
+        output << result.first << " " << result.second << endl; 
+        output.close();
+    } else{
+        cout << result.first << " " << result.second;
+    }
+    
+
     return 0;
 }
