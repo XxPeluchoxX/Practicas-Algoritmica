@@ -6,10 +6,12 @@
 #include <vector> 
 #include <limits> 
 #include <cfloat> 
-
+#include <ctime>    
+#include <chrono> 
 #include <unistd.h>
 
 using namespace std;
+using namespace std::chrono;    
 
 /**
  * Calcula la distancia euclidea entre dos puntos en el plano.
@@ -173,10 +175,10 @@ void mejor_caminoDyV(vector<pair<int,int>> &v, int inf, int sup, bool sort_by_x)
 /**
  * Imprime el contenido de v
 */
-void print_v(vector<pair<int,int>> v){
+void print_v(vector<pair<int,int>> v, ofstream &os){
     vector<pair<int,int>>::iterator it;
     for(it = v.begin(); it != v.end(); ++it){
-        cout << it->first << " " << it->second << endl;
+        os << it->first << " " << it->second << endl;
     }
 }
 
@@ -186,40 +188,63 @@ void print_v(vector<pair<int,int>> v){
  * @param argc Numero de argumentos
  * @param argv Array con los argumentos
  *
- * Uso: programa <archivo>
+ * Uso: programa <entrada> <salida>
+ * Formato de entrada
+ * n
+ * x y
+ * x y
+ * .
+ * .
+ * .
  */
 int main(int argc, char **argv){
     // Comprobacion de parametros
-    if (argc != 2){
-        cout << "Uso: ./mejor_camino <archivo>\n";
+    if (argc != 3){
+        cout << "Uso: ejecutable <entrada> <salida>\n";
         return 1;
     }    
 
-    // Abrimos el archivo
-    string ruta = argv[1];
 
-    ifstream archivo(ruta);
-    if (!archivo.is_open()){
-        cout << "Error al abrir el archivo\n";
+    ifstream entrada(argv[1]);
+    if (!entrada.is_open()){
+        cout << "Error al abrir el archivo de entrada\n";
+        return 1;
+    }
+    
+    ofstream salida(argv[2]);
+    if (!salida.is_open()){
+        cout << "No se puede abrir el archivo de salida\n"; 
         return 1;
     }
 
     // Lectura del archivo
     int n, x, y;
-    archivo >> n;
+    entrada >> n;
     vector<pair<int,int>> ciudades(n); 
 
     for(int i=0; i < n; i++){
-        archivo >> ciudades[i].first >> ciudades[i].second;
+        entrada >> ciudades[i].first >> ciudades[i].second;
     }
 
+    high_resolution_clock::time_point tantes, tdespues;
+    duration<double> transcurrido;
+
     // Busco el mejor camino
-    sort(ciudades.begin(), ciudades.end());
+    //sort(ciudades.begin(), ciudades.end());
+
+    tantes = high_resolution_clock::now();
     mejor_caminoDyV(ciudades, 0, n-1, true);
+    tdespues = high_resolution_clock::now();
     
+    transcurrido = duration_cast<duration<double>>(tdespues - tantes);
+
+    // Doy la salida de tiempo
+    cout << n << " " << transcurrido.count() << endl;
+
+
     // Añadimos la primera ciudad (volver a ella)
     ciudades.push_back(ciudades[0]);
-    print_v(ciudades);
+    print_v(ciudades, salida);
 
     return 0;
 }
