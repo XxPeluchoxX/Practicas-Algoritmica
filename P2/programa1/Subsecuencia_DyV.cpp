@@ -151,7 +151,7 @@ pair<int,int> subsecMax_DyV (const vector<int> &v, int init, int fin){
 
 int main (int argc,char **argv){
     
-    if(argc!=4){
+    if(argc!=2){
         cout << " ./ejecutable <FILE>";
         return 1;
     }
@@ -191,26 +191,29 @@ int main (int argc,char **argv){
     input.close();
 
     //Salida
-    file=argv[2];
-    ofstream output(file);
-
-    if(!output){
-        cout << "File" + file + "not found. Couldn't be opened.";
-    }
-    else{
-        output << result.first << " " << result.second;
-    }
-    output.close();
-    file=argv[3];
-    output.open(file);
-
-    if(!output){
-        cout << "File" + file + "not found. Couldn't be opened.";
-    }
-    else{
-        output << tam << " " << transcurrido.count() << endl;
-    }
-    output.close();
+    //file=argv[2];
+    //ofstream output(file);
+//
+    //if(!output){
+        //cout << "File" + file + "not found. Couldn't be opened.";
+    //}
+    //else{
+        //output << result.first << " " << result.second;
+    //}
+    //output.close();
+    //file=argv[3];
+    //output.open(file);
+//
+    //if(!output){
+        //cout << "File" + file + "not found. Couldn't be opened.";
+    //}
+    //else{
+        //output << tam << " " << transcurrido.count() << endl;
+    //}
+    //output.close();
+    //
+    cout << tam << " " << transcurrido.count() << endl;
+    cout << result.first << " " << result.second;
     return 0;
 
 }
