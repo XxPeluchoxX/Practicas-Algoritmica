@@ -1,4 +1,8 @@
 #include <iostream>
+#include <fstream> 
+#include <chrono> 
+#include <ctime> 
+
 
 
 
@@ -105,29 +109,40 @@ void Enlosar(unsigned int **M, int n, int row, int col)
 {
     Enlosar(M,n,row,col,0,0);
 }
-
+/***
+ * Uso ejecutable <entrada> <salida>
+ * Formato de entrada: m x y
+ * m potencia de 2
+ * (x,y) es la posición del sumidero
+ */
 int main(int argc, char *argv[])
 {
 
-    // 2^n es el numero de filas y columnas, row y col es la posición del sumidero
+    // m es el numero de filas y columnas, row y col es la posición del sumidero
     int n, row, col;
 
+    if (argc =! 3){
+        std::cout << "Uso: ejecutable <entrada> <salida>\n";
+        return 1;
+    }
 
-    if (argc < 2)
-    {
-        n = 2;
+    std::ifstream entrada(argv[1]);
+    if (!entrada.is_open()){
+        std::cout << "No se puede abrir el archivo de entrada\n"; 
+        return 1;
     }
-    else if (argc < 4)
-    {
-        row = col = 0;
+
+    std::ofstream salida(argv[2]);
+    if (!salida.is_open()){
+        std::cout << "No se puede abrir el archivo de salida\n"; 
+        return 1;
     }
-    else
-    {
-        n = std::stoi(argv[1]);
-        row = std::stoi(argv[2]);
-        col = std::stoi(argv[3]);
-    }
-    m = 1 << n;
+
+    entrada >> n >> row >> col;
+
+    int m = 1 << n;
+
+
     unsigned int** M = new unsigned int*[m];
 
     for(int i = 0; i < m; ++i){
@@ -137,15 +152,24 @@ int main(int argc, char *argv[])
         }
     }
 
-    Enlosar(M,n,row,col);
-    //Escribir_baldosa(M,0,0,1,1,1);
+    std::chrono::high_resolution_clock::time_point tantes, tdespues;
+    std::chrono::duration<double> transcurrido;
 
-    std::cout << std::endl << std::endl << std::endl;
+    tantes = std::chrono::high_resolution_clock::now();
+    Enlosar(M,n,row,col);
+    tdespues = std::chrono::high_resolution_clock::now();
+
+    transcurrido = std::chrono::duration_cast<std::chrono::duration<double>>(tdespues-tantes);
+
+    // Doy la salida de tiempo
+
+    std::cout << m << " " << transcurrido.count() << std::endl;
+
     for(int i=0; i < m; ++i){
         for(int j = 0; j < m; ++j){
-            std::cout << M[i][j] << "\t"; 
+            salida << M[i][j] << "\t"; 
         }
-        std::cout << std::endl;
+        salida << std::endl;
     }
 
     for(int i = 0; i < m; ++i){
