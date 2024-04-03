@@ -63,7 +63,7 @@ void mejor_camino(vector<pair<int,int>> &v, int inf, int sup){
     }while(next_permutation(perm.begin()+1, perm.end()));
 }
 
-// resul : saca abcd
+// resul : saca ac
 // a1, a2: izqda
 // b1, b2: dcha
 void funcion(pair<int, int>* resul, pair<int, int> a1, pair<int, int> a2, pair<int, int> b1, pair<int, int> b2, pair<int, int> p){
@@ -109,13 +109,34 @@ void ordena(vector<pair<int,int>> &v, int inf, int sup, bool sort_by_x){
     }
 }
 
-void rota(vector<pair<int, int>> &v, int inf, int sup){
-    pair<int, int> primero = v[inf];
-    for(int i = inf; i < sup; i++){
-        v[i] = v[i+1];
+// Rota k posiciones el vector entre [inf, sup]
+void rota(vector<pair<int, int>> &v, int inf, int sup, int k){
+    vector<pair<int, int>> temp(k);
+    
+    // Guarda los k primeros
+    for(int i = inf; i < inf + k; i++){
+        temp[i-inf] = v[i];
     }
 
-    v[sup] = primero;
+    // Rota todos k posiciones adelante
+    for(int i = inf + k; i <= sup; i++){
+        v[i-k] = v[i];
+    }
+
+    // Pone los k primeros en las k ultimas posiciones
+    for(int i = sup - k + 1; i <= sup; i++){
+        v[i] = temp[i - sup + k - 1];
+    }
+}
+
+// Busca buscado en v, entre [inf, sup] y devuelve su indice - inf
+int busca(vector<pair<int, int>> &v, int inf, int sup, pair<int, int> buscado){
+    for(int i = inf; i <= sup; i++){
+        if(v[i] == buscado)
+            return i-inf;
+    }
+
+    return inf;
 }
 
 // Calcular distancias en brute force
@@ -144,9 +165,8 @@ void mejor_caminoDyV(vector<pair<int,int>> &v, int inf, int sup, bool sort_by_x)
         intercambia(v, vect, inf, sup, k);
 
         // Devuelvo la solucion con el pivote antiguo en inf
-        while(v[inf] != old_pivote){
-            rota(v, inf, sup);
-        }
+        int desfase = busca(v, inf, sup, old_pivote);
+        rota(v, inf, sup, desfase);
     }
 }
 
