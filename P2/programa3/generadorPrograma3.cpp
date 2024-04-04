@@ -14,10 +14,15 @@
 #include <sys/types.h>
 using namespace std;
 
-const string CARPETA_INSTANCIAS = "../instancias/";
+const string CARPETA_INSTANCIAS = "./instancias/";
 const string FICHERO_INSTANCIAS = "programa3";
+
 const string CARPETA_OUTPUT = "./salidas/";
 const string FICHERO_OUTPUT = "programa3";
+
+const string CARPETA_CAMINOS = "./dibujos/"; // relativa a CARPETA_OUTPUT
+const string SCRIPT_CAMINOS = "dibuja_caminos.gp"; // se guardará temporalmente en CARPETA_OUTPUT
+
 const string CARPETA_TIEMPOS = "./tiempos/";
 const string FICHERO_TIEMPOS = "programa3";
 
@@ -63,6 +68,24 @@ string formateaRuta(string carpeta, string fichero, int n){
     return carpeta + fichero + "_" + to_string(n) + ".txt";
 }
 
+// Genera un script gnuplot que grafica n puntos, a partir del archivo datos
+// y guardando un .png con su dibujo en ruta con el nombre camino_n.png
+// el archivo se llamará script
+void generaScriptGnuplot(int n, const string& datos, const string& ruta, const string& script){
+    ofstream flujo(script);
+
+    flujo << "set xrange [0:" + to_string(2*n) + "]\n"
+            + "set yrange [0:" + to_string(2*n) + "]\n"
+            + "set pointsize 2\n"
+            + "unset key\n"
+            + "plot '" + datos + "' with points, '" + datos + "' with lines\n"
+            + "set terminal pngcairo\n"
+            + "set output '" + ruta + "camino_" + to_string(n) + ".png'\n"
+            + "replot\n";
+
+    flujo.close();
+}
+
 /**
  * Generador de casos, ejecuta y genera gráficas
  *
@@ -73,7 +96,8 @@ string formateaRuta(string carpeta, string fichero, int n){
  * [estado]: {1, 2, 3} Si no es especifica, 3 por defecto
  *      1: Sólo genera instancias
  *      2: Sólo genera instancias y ejecuta midiendo tiempos
- *      3: Hace 2 y genera gráfica y regresión
+ *      3: Hace 2 y genera visualmente los caminos computados
+ *      4: Hace 3 y genera gráfica y regresión
 */
 int main(int argc, char** argv){
     if(argc < 5 || argc > 6){
@@ -102,7 +126,8 @@ int main(int argc, char** argv){
 
     // Ejecución
 
-    if(estado >= 1){ // Estado = 1, 2, ó 3
+    /*
+    if(estado >= 1){ // Estado = 1, 2, 3 ó 4
         int n;
         borrarContenidoCarpeta(CARPETA_INSTANCIAS);
 
@@ -142,7 +167,7 @@ int main(int argc, char** argv){
         }
     }
 
-    if(estado >= 2){ // estado = 2 ó 3 
+    if(estado >= 2){ // estado = 2, 3 ó 4
         // Elimino archivo anterior
         
         string archivoTiempos = CARPETA_TIEMPOS + FICHERO_TIEMPOS;
@@ -167,8 +192,28 @@ int main(int argc, char** argv){
             }
         }
     }
+    */
 
-    if(estado >= 3){ // estado = 3
+    if(estado >= 3){ // estado = 3 ó 4
+        string archivoGnuplot = CARPETA_CAMINOS + SCRIPT_CAMINOS;
+        string datos, orden;
+
+        // Por cada instancia generada
+        for(int n = min; n <= max; n += salto){
+            // genera el script gnuplot
+            datos = formateaRuta("", FICHERO_OUTPUT, n);
+            generaScriptGnuplot(n, datos, CARPETA_CAMINOS, CARPETA_OUTPUT + SCRIPT_CAMINOS);
+
+            // ejecuta el script gnuplot
+            orden = "cd " + CARPETA_OUTPUT + ";";
+            orden += "gnuplot " + SCRIPT_CAMINOS;
+            if(system(orden.c_str()) != 0){
+                cout << "Error al graficar tamano " << n << endl;
+            }
+        }
+    }
+
+    if(estado >= 4){ // estado = 4
         string archivoTiempos = CARPETA_TIEMPOS + FICHERO_TIEMPOS;
 
         string orden = "cd " + CARPETA_TIEMPOS + ";";
