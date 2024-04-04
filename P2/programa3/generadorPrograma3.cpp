@@ -27,8 +27,13 @@ const string SCRIPT_CAMINOS = "dibuja_caminos.gp"; // se guardará temporalmente
 const string CARPETA_TIEMPOS = "./tiempos/";
 const string FICHERO_TIEMPOS = "programa3";
 
-// Borra el contenido de carpeta;
-// Si falla, devuelve false
+/**
+ * @brief Borra el contenido de una carpeta
+ * 
+ * @param carpeta ruta de la carpeta a borrar
+ * @return true La carpeta se ha borrado correctamente
+ * @return false Ha habido un error al borrar la carpeta
+ */
 bool borrarContenidoCarpeta(const string& carpeta) {
     DIR* dir = opendir(carpeta.c_str());
     if (dir == nullptr) {
@@ -59,20 +64,37 @@ bool borrarContenidoCarpeta(const string& carpeta) {
     return true;
 }
 
-// Genera un número aleatorio en [0, rango]
+/**
+ * @brief Devuelve un número aleatorio en [0, rango]
+ * 
+ * @param rango valor que acota el rango de valores aleatorios
+ * @return int número aleatorio en [0, rango]
+ */
 int aleatorioRango(int rango){
     int num_valores = rango + 1;
     return rand() % num_valores;
 }
 
-// Dada una carpeta, un fichero y un índice, crea la ruta corresondiente
+/**
+ * @brief Dada una carpeta, un fichero y un índice, crea la ruta corresondiente
+ * 
+ * @param carpeta Ruta de la carpeta
+ * @param fichero Nombre del fichero
+ * @param n Índice
+ * @return string Ruta formateada. Ejemplo: "./carpeta/fichero_n.txt" 
+ */
 string formateaRuta(string carpeta, string fichero, int n){
     return carpeta + fichero + "_" + to_string(n) + ".txt";
 }
 
-// Genera un script gnuplot que grafica n puntos, a partir del archivo datos
-// y guardando un .png con su dibujo en ruta con el nombre camino_n.png
-// el archivo se llamará script
+/**
+ * @brief Genera un script de gnuplot para graficar los caminos
+ * 
+ * @param n  Número de ciudades
+ * @param datos  Archivo de datos
+ * @param ruta  Ruta de salida
+ * @param script  Nombre del script
+ */
 void generaScriptGnuplot(int n, const string& datos, const string& ruta, const string& script){
     ofstream flujo(script);
 
@@ -115,8 +137,9 @@ int main(int argc, char** argv){
     int salto = strtol(argv[4], NULL, 10);
 
     int estado;
+    const int DEFAULT_ESTADO = 4;
     if(argc == 5){
-        estado = 4;
+        estado = DEFAULT_ESTADO;
     }else{
         estado = strtol(argv[5], NULL, 10);
     }

@@ -17,8 +17,13 @@ const string FICHERO_OUTPUT = "programa2";
 const string CARPETA_TIEMPOS = "./tiempos/";
 const string FICHERO_TIEMPOS = "programa2";
 
-// Borra el contenido de carpeta;
-// Si falla, devuelve false
+/**
+ * @brief Borra el contenido de una carpeta
+ * 
+ * @param carpeta ruta de la carpeta a borrar
+ * @return true La carpeta se ha borrado correctamente
+ * @return false Ha habido un error al borrar la carpeta
+ */
 bool borrarContenidoCarpeta(const std::string& carpeta) {
     DIR* dir = opendir(carpeta.c_str());
     if (dir == nullptr) {
@@ -48,13 +53,25 @@ bool borrarContenidoCarpeta(const std::string& carpeta) {
     return true;
 }
 
-// Genera un número aleatorio en [0, rango]
+/**
+ * @brief Devuelve un número aleatorio en [0, rango]
+ * 
+ * @param rango valor que acota el rango de valores aleatorios
+ * @return int número aleatorio en [0, rango]
+ */
 int aleatorioRango(int rango){
     int num_valores = rango + 1;
     return rand() % num_valores;
 }
 
-// Dada una carpeta, un fichero y un índice, crea la ruta corresondiente
+/**
+ * @brief Dada una carpeta, un fichero y un índice, crea la ruta corresondiente
+ * 
+ * @param carpeta Ruta de la carpeta
+ * @param fichero Nombre del fichero
+ * @param n Índice
+ * @return string Ruta formateada. Ejemplo: "./carpeta/fichero_n.txt" 
+ */
 string formateaRuta(string carpeta, string fichero, int n){
     return carpeta + fichero + "_" + to_string(n) + ".txt";
 }
@@ -84,8 +101,9 @@ int main(int argc, char** argv){
     int max = strtol(argv[3], NULL, 10);
 
     int estado;
+    const int DEFAULT_ESTADO = 3;
     if(argc == 4){
-        estado = 3;
+        estado = DEFAULT_ESTADO;
     }else{
         estado = strtol(argv[4], NULL, 10);
     }

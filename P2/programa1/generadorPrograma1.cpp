@@ -15,8 +15,13 @@ const string FICHERO_OUTPUT = "programa1";
 const string CARPETA_TIEMPOS = "./tiempos/";
 const string FICHERO_TIEMPOS = "programa1";
 
-// Borra el contenido de carpeta;
-// Si falla, devuelve false
+/**
+ * @brief Borra el contenido de una carpeta
+ * 
+ * @param carpeta ruta de la carpeta a borrar
+ * @return true La carpeta se ha borrado correctamente
+ * @return false Ha habido un error al borrar la carpeta
+ */
 bool borrarContenidoCarpeta(const std::string& carpeta) {
     DIR* dir = opendir(carpeta.c_str());
     if (dir == nullptr) {
@@ -25,6 +30,8 @@ bool borrarContenidoCarpeta(const std::string& carpeta) {
     }
 
     dirent* entrada;
+
+    // Elimina cada archivo/directorio de la carpeta
     while ((entrada = readdir(dir)) != nullptr) {
         // Ignora las entradas "." y ".."
         if (std::string(entrada->d_name) == "." || std::string(entrada->d_name) == "..") {
@@ -46,13 +53,25 @@ bool borrarContenidoCarpeta(const std::string& carpeta) {
     return true;
 }
 
-// Genera un número aleatorio en [-rango, rango]
+/**
+ * @brief Devuelve un número aleatorio en [-rango, rango]
+ * 
+ * @param rango valor que acota el rango de valores aleatorios
+ * @return int número aleatorio en [-rango, rango]
+ */
 int aleatorioRango(int rango){
     static int num_valores = 2*rango + 1;
     return rand() % num_valores - rango;
 }
 
-// Dada una carpeta, un fichero y un índice, crea la ruta corresondiente
+/**
+ * @brief Dada una carpeta, un fichero y un índice, crea la ruta corresondiente
+ * 
+ * @param carpeta Ruta de la carpeta
+ * @param fichero Nombre del fichero
+ * @param n Índice
+ * @return string Ruta formateada. Ejemplo: "./carpeta/fichero_n.txt" 
+ */
 string formateaRuta(string carpeta, string fichero, int n){
     return carpeta + fichero + "_" + to_string(n) + ".txt";
 }
@@ -85,6 +104,8 @@ int main(int argc, char** argv){
     int salto = strtol(argv[4], NULL, 10);
     int rango = strtol(argv[5], NULL, 10);
 
+
+    // Obtiene el estado
     int estado;
     const int DEFAULT_ESTADO = 3;
     if(argc == 6){
@@ -94,17 +115,16 @@ int main(int argc, char** argv){
     }
 
     // instanciar generador de números aleatorios
-
     time_t t;
     srand(time(&t));
 
-    // Ejecución
 
+    // Ejecución
     if(estado >= 1){ // Estado = 1, 2, ó 3
         int n;
         borrarContenidoCarpeta(CARPETA_OUTPUT);
 
-        // generamos todas las instancias de n
+        // Generamos todas las instancias de n
         for(n = min; n <= max; n += salto){
 
             ofstream flujo(formateaRuta(CARPETA_OUTPUT, FICHERO_OUTPUT, n));
@@ -114,17 +134,18 @@ int main(int argc, char** argv){
 
             flujo << n << "\n";
 
+            // Generamos n valores aleatorios
             for(int i = 0; i < n; i++){
                 flujo << aleatorioRango(rango) << " ";
             }
 
             flujo.close();
         }
-    }
+    } // Fin estado = 1
 
     if(estado >= 2){ // estado = 2 ó 3 
+
         // Elimino archivo anterior
-        
         string archivoTiempos = CARPETA_TIEMPOS + FICHERO_TIEMPOS;
         if(remove(archivoTiempos.c_str()) != 0){
             cout << "Error al borrar archivo de tiempos antiguo" << endl;
@@ -133,6 +154,8 @@ int main(int argc, char** argv){
         // Por cada instancia
         string orden;
         for(int n = min; n <= max; n += salto){
+
+            // Ejecutamos el programa y tan solo guardamos el tiempo
             orden = argv[1]; // ruta al ejecutable
             orden += " " + formateaRuta(CARPETA_OUTPUT, FICHERO_OUTPUT, n);
             orden += " | head -n1 >> " + CARPETA_TIEMPOS + FICHERO_TIEMPOS;
@@ -146,6 +169,7 @@ int main(int argc, char** argv){
     if(estado >= 3){ // estado = 3
         string archivoTiempos = CARPETA_TIEMPOS + FICHERO_TIEMPOS;
 
+        // Generamos la gráfica
         string orden = "cd " + CARPETA_TIEMPOS + ";";
         orden += "gnuplot script_programa1.gp";
 
