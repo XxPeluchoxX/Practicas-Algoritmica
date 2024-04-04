@@ -20,7 +20,8 @@ const string FICHERO_INSTANCIAS = "programa3";
 const string CARPETA_OUTPUT = "./salidas/";
 const string FICHERO_OUTPUT = "programa3";
 
-const string CARPETA_CAMINOS = "./dibujos/"; // relativa a CARPETA_OUTPUT
+const string NOMBRE_CARPETA_CAMINOS = "dibujos";
+const string CARPETA_CAMINOS = "./" + NOMBRE_CARPETA_CAMINOS + "/"; // relativa a CARPETA_OUTPUT
 const string SCRIPT_CAMINOS = "dibuja_caminos.gp"; // se guardará temporalmente en CARPETA_OUTPUT
 
 const string CARPETA_TIEMPOS = "./tiempos/";
@@ -28,26 +29,27 @@ const string FICHERO_TIEMPOS = "programa3";
 
 // Borra el contenido de carpeta;
 // Si falla, devuelve false
-bool borrarContenidoCarpeta(const std::string& carpeta) {
+bool borrarContenidoCarpeta(const string& carpeta) {
     DIR* dir = opendir(carpeta.c_str());
     if (dir == nullptr) {
-        std::cerr << "Error al abrir la carpeta: " << carpeta << std::endl;
+        cerr << "Error al abrir la carpeta: " << carpeta << endl;
         return false;
     }
 
     dirent* entrada;
     while ((entrada = readdir(dir)) != nullptr) {
-        // Ignora las entradas "." y ".."
-        if (std::string(entrada->d_name) == "." || std::string(entrada->d_name) == "..") {
+        // Ignora las entradas ".", ".." y CARPETA_CAMINOS
+        if (string(entrada->d_name) == "." || string(entrada->d_name) == ".."
+                || string(entrada->d_name) == NOMBRE_CARPETA_CAMINOS) {
             continue;
         }
 
         // Construye la ruta completa del archivo/directorio
-        std::string rutaCompleta = carpeta + "/" + entrada->d_name;
+        string rutaCompleta = carpeta + "/" + entrada->d_name;
 
         // Elimina el archivo o directorio
         if (remove(rutaCompleta.c_str()) != 0) {
-            std::cerr << "Error al eliminar: " << rutaCompleta << std::endl;
+            cerr << "Error al eliminar: " << rutaCompleta << endl;
             closedir(dir);
             return false;
         }
@@ -114,7 +116,7 @@ int main(int argc, char** argv){
 
     int estado;
     if(argc == 5){
-        estado = 3;
+        estado = 4;
     }else{
         estado = strtol(argv[5], NULL, 10);
     }
@@ -126,7 +128,6 @@ int main(int argc, char** argv){
 
     // Ejecución
 
-    /*
     if(estado >= 1){ // Estado = 1, 2, 3 ó 4
         int n;
         borrarContenidoCarpeta(CARPETA_INSTANCIAS);
@@ -192,7 +193,6 @@ int main(int argc, char** argv){
             }
         }
     }
-    */
 
     if(estado >= 3){ // estado = 3 ó 4
         string archivoGnuplot = CARPETA_CAMINOS + SCRIPT_CAMINOS;
