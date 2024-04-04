@@ -14,7 +14,7 @@
 #include <sys/types.h>
 using namespace std;
 
-const string CARPETA_INSTANCIAS = "./instancias/";
+const string CARPETA_INSTANCIAS = "../instancias/";
 const string FICHERO_INSTANCIAS = "programa3";
 const string CARPETA_OUTPUT = "./salidas/";
 const string FICHERO_OUTPUT = "programa3";
