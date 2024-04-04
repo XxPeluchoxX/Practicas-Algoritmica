@@ -10,7 +10,7 @@
 #include <sys/types.h>
 using namespace std;
 
-const string CARPETA_OUTPUT = "./instancias/";
+const string CARPETA_OUTPUT = "../instancias/";
 const string FICHERO_OUTPUT = "programa1";
 const string CARPETA_TIEMPOS = "./tiempos/";
 const string FICHERO_TIEMPOS = "programa1";
@@ -86,8 +86,9 @@ int main(int argc, char** argv){
     int rango = strtol(argv[5], NULL, 10);
 
     int estado;
+    const int DEFAULT_ESTADO = 3;
     if(argc == 6){
-        estado = 3;
+        estado = DEFAULT_ESTADO;
     }else{
         estado = strtol(argv[6], NULL, 10);
     }

@@ -2,12 +2,11 @@
 #include <random>
 #include <utility>
 #include <vector>
-#include <chrono> 
+#include <chrono>
 #include <ctime> 
 #include <fstream> 
 
 using namespace std;
-using namespace std::chrono;
 
 
 /**
@@ -51,7 +50,7 @@ pair<int,int> subsecMax_Iterativo (const vector<int> &v, int init, int fin){
     pair<int,int> bounds_max(INVALID_INDEX,INVALID_INDEX); // Limites de la subsecuencia maxima
 
     
-    for(int i=init; i<fin; ++i){
+    for(int i=init; i<=fin; ++i){
         
         // Si la suma local es negativa, no la consideramos porque nos quedaremos con la subsecuencia vacia
         if(localmax >= 0){
@@ -90,8 +89,8 @@ pair<int,int> subsecMax_Iterativo (const vector<int> &v, int init, int fin){
  */
 int main (int argc,char **argv){
     
-    if(argc!=3 || argc != 2){
-        cerr << " ./ejecutable <entrada> [<salida>]";
+    if(argc!=3 && argc != 2){
+        cerr << " Error: ./ejecutable <entrada> [<salida>]" << endl;
         return 1;
     }
 
@@ -124,14 +123,14 @@ int main (int argc,char **argv){
     input.close();
 
 
-    high_resolution_clock::time_point tantes, tdespues;
-    duration<double> transcurrido;
+    chrono::high_resolution_clock::time_point tantes, tdespues;
+    chrono::duration<double> transcurrido;
 
     tantes= chrono::high_resolution_clock::now();
     result = subsecMax_Iterativo(v,0,v.size()-1);
     tdespues = chrono::high_resolution_clock::now();
 
-    transcurrido = duration_cast <duration<double>> (tdespues-tantes);
+    transcurrido = chrono::duration_cast <chrono::duration<double>> (tdespues-tantes);
     
 
     // Salida.
@@ -142,7 +141,7 @@ int main (int argc,char **argv){
         output << result.first << " " << result.second << endl; 
         output.close();
     } else{
-        cout << result.first << " " << result.second;
+        cout << result.first << " " << result.second << endl;
     }
     
 

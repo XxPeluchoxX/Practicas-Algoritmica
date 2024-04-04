@@ -177,8 +177,8 @@ int main(int argc, char *argv[])
     // Creación de la matriz e inicialización a 0
     unsigned int** M = new unsigned int*[dim];
     for(int i = 0; i < dim; ++i){
-        M[i] = new unsigned int[m];
-        for(int j=0;j<m;++j){
+        M[i] = new unsigned int[dim];
+        for(int j=0;j<dim;++j){
             M[i][j] = 0;
         }
     }

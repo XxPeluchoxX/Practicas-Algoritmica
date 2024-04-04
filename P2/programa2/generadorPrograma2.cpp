@@ -10,7 +10,7 @@
 #include <sys/types.h>
 using namespace std;
 
-const string CARPETA_INSTANCIAS = "./instancias/";
+const string CARPETA_INSTANCIAS = "../instancias/";
 const string FICHERO_INSTANCIAS = "programa2";
 const string CARPETA_OUTPUT = "./salidas/";
 const string FICHERO_OUTPUT = "programa2";
