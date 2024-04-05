@@ -5,7 +5,7 @@
 # make: compila los 3 cpp
 # make clean: elimina todos los archivos basura, que no queremos subir al repositorio
 # make save_It: guarda los resultados del iterativo en una carpeta, conclusiones_It, y se llama a clean
-# make save_DyV: guarda los resultados del iterativo en una carpeta, conclusiones_DyV, y se llama a clean
+# make save_DyV: guarda los resultados del Divide y Vencerás en una carpeta, conclusiones_DyV, y se llama a clean
 
 CXX = g++				# Compilador a utilizar
 CXXFLAGS = -Wall -O2	# Opciones de compilación
