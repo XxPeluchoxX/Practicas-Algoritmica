@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
     // n es el exponente, (row, col) es la posición del sumidero
     int n, row, col;
 
-    if (argc =! 3){
+    if (argc != 3 || argc != 2){
         std::cout << "Uso: ejecutable <entrada> <salida>\n";
         return 1;
     }
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
 
     // Apertura del archivo de salida
     std::ofstream salida;
-    if(n <= EXP_MAX_SALIDA){
+    if(argc == 3){
         salida.open(argv[2]);
         if (!salida.is_open()){
             std::cout << "No se puede abrir el archivo de salida\n"; 
@@ -201,7 +201,7 @@ int main(int argc, char *argv[])
     std::cout << dim << " " << transcurrido.count() << std::endl;
 
     // Escritura de la matriz en el archivo de salida
-    if(n <= EXP_MAX_SALIDA){
+    if(argc == 3){
         for(int i=0; i < dim; ++i){
             for(int j = 0; j < dim; ++j){
                 salida << M[i][j] << "\t"; 
@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
     delete[] M;
 
     // cierre de flujos
-    if(n <= EXP_MAX_SALIDA){
+    if(argc == 3){
         salida.close();
     }
 

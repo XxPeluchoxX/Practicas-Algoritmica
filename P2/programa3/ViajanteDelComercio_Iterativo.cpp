@@ -41,16 +41,16 @@ void mejor_camino_Iterativo(vector<pair<int,int>> &v, int inf, int sup){
     if (inf >= sup){ // Caso base, no hay ciudades que considerar
         return;
     }
-    sort(v.begin()+1, v.end()); // El next_permutation necesita que este el vector en orden ascendente.
+    sort(v.begin()+inf+1, v.end()+sup+1); // El next_permutation necesita que este el vector en orden ascendente.
 
     int n = sup - inf + 1;  // Número de ciudades que consideramos
     double min = DBL_MAX;   // Distancia mínima inicial. La inicializamos a un valor muy grande para que cualquier distancia sea menor
 
-    vector<pair<int, int>> perm; // Lista de las ciudades que vamos a considerar
+    vector<pair<int, int>> perm(n); // Lista de las ciudades que vamos a considerar
 
     // Almacena en perm las ciudades que vamos a considerar. Permutación inicial
     for(int i = 0; i < n; i++){
-        perm.push_back(v[inf + i]);
+        perm[i] = v[inf + i];
     }
 
     double sum = 0; // Suma de las distancias de la permutación actual
