@@ -10,6 +10,9 @@
 #include <sys/types.h>
 using namespace std;
 
+// Si el exponente para el problema es mayor, no generamos archivos con la solucion
+const int MAX_EXP_GENERA_ARCHIVO = 8;
+
 const string CARPETA_INSTANCIAS = "./instancias/";
 const string FICHERO_INSTANCIAS = "programa2";
 const string CARPETA_OUTPUT = "./salidas/";
@@ -152,7 +155,12 @@ int main(int argc, char** argv){
 
             orden = argv[1]; // ruta al ejecutable
             orden += " " + formateaRuta(CARPETA_INSTANCIAS, FICHERO_INSTANCIAS, n);
-            orden += " " + formateaRuta(CARPETA_OUTPUT, FICHERO_OUTPUT, n);
+
+            // Si el exponente es pequeno, generamos la salida en un archivo
+            if(n <= MAX_EXP_GENERA_ARCHIVO){
+                orden += " " + formateaRuta(CARPETA_OUTPUT, FICHERO_OUTPUT, n);
+            }
+
             orden += " | head -n1 >> " + CARPETA_TIEMPOS + FICHERO_TIEMPOS;
 
             if(system(orden.c_str()) != 0){
