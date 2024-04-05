@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
     // n es el exponente, (row, col) es la posición del sumidero
     int n, row, col;
 
-    if (argc != 3 || argc != 2){
+    if (argc != 3 && argc != 2){
         std::cout << "Uso: ejecutable <entrada> <salida>\n";
         return 1;
     }
