@@ -98,8 +98,8 @@ string formateaRuta(string carpeta, string fichero, int n){
 void generaScriptGnuplot(int n, const string& datos, const string& ruta, const string& script){
     ofstream flujo(script);
 
-    flujo << "set xrange [0:" + to_string(2*n) + "]\n"
-            + "set yrange [0:" + to_string(2*n) + "]\n"
+    flujo << "set xrange [-1:" + to_string(2*n+1) + "]\n"
+            + "set yrange [-1:" + to_string(2*n+1) + "]\n"
             + "set pointsize 2\n"
             + "unset key\n"
             + "plot '" + datos + "' with points, '" + datos + "' with lines\n"
@@ -120,8 +120,8 @@ void generaScriptGnuplot(int n, const string& datos, const string& ruta, const s
  * [estado]: {1, 2, 3} Si no es especifica, 3 por defecto
  *      1: Sólo genera instancias
  *      2: Sólo genera instancias y ejecuta midiendo tiempos
- *      3: Hace 2 y genera visualmente los caminos computados
- *      4: Hace 3 y genera gráfica y regresión
+ *      3: Hace 2 y genera gráfica y regresión
+ *      4: Hace 3 y genera visualmente los caminos computados
 */
 int main(int argc, char** argv){
     if(argc < 5 || argc > 6){
@@ -218,6 +218,17 @@ int main(int argc, char** argv){
     }
 
     if(estado >= 3){ // estado = 3 ó 4
+        string archivoTiempos = CARPETA_TIEMPOS + FICHERO_TIEMPOS;
+
+        string orden = "cd " + CARPETA_TIEMPOS + ";";
+        orden += "gnuplot script_programa3.gp";
+
+        if(system(orden.c_str()) != 0){
+            cout << "Error en gnuplot" << endl;
+        }
+    }
+
+    if(estado >= 4){ // estado = 4
         string archivoGnuplot = CARPETA_CAMINOS + SCRIPT_CAMINOS;
         string datos, orden;
 
@@ -233,17 +244,6 @@ int main(int argc, char** argv){
             if(system(orden.c_str()) != 0){
                 cout << "Error al graficar tamano " << n << endl;
             }
-        }
-    }
-
-    if(estado >= 4){ // estado = 4
-        string archivoTiempos = CARPETA_TIEMPOS + FICHERO_TIEMPOS;
-
-        string orden = "cd " + CARPETA_TIEMPOS + ";";
-        orden += "gnuplot script_programa3.gp";
-
-        if(system(orden.c_str()) != 0){
-            cout << "Error en gnuplot" << endl;
         }
     }
             

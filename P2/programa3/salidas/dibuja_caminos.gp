@@ -1,8 +1,8 @@
-set xrange [0:200]
-set yrange [0:200]
+set xrange [-1:101]
+set yrange [-1:101]
 set pointsize 2
 unset key
-plot 'programa3_100.txt' with points, 'programa3_100.txt' with lines
+plot 'programa3_50.txt' with points, 'programa3_50.txt' with lines
 set terminal pngcairo
-set output './dibujos/camino_100.png'
+set output './dibujos/camino_50.png'
 replot

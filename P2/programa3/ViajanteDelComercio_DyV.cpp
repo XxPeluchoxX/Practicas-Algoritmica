@@ -376,7 +376,7 @@ int main(int argc, char **argv){
     }
 
     // Lectura del archivo
-    int n, x, y;
+    int n;
     entrada >> n;
     vector<pair<int,int>> ciudades(n); 
 

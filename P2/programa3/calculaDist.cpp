@@ -22,7 +22,6 @@ int main(int argc, char **argv){
     }
 
     // Lectura del archivo
-    int x, y;
     vector<pair<int,int>> ciudades(n); 
 
     for(int i=0; i < n; i++){
