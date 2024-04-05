@@ -3,7 +3,8 @@
 #include <chrono> 
 #include <ctime>
 
-
+// Exponente máximo hasta el que se genera un archivo de salida
+#define EXP_MAX_SALIDA 8
 
 /**
  * @brief  Escribe una baldosa en la matriz M.
@@ -162,15 +163,18 @@ int main(int argc, char *argv[])
     }
 
     // Apertura del archivo de salida
-    std::ofstream salida(argv[2]);
-    if (!salida.is_open()){
-        std::cout << "No se puede abrir el archivo de salida\n"; 
-        return 1;
+    std::ofstream salida;
+    if(n <= EXP_MAX_SALIDA){
+        salida.open(argv[2]);
+        if (!salida.is_open()){
+            std::cout << "No se puede abrir el archivo de salida\n"; 
+            return 1;
+        }
     }
 
     // Lectura de los datos de entrada
     entrada >> n >> row >> col;
-
+    entrada.close();
 
     int dim = 1 << n; // dim = 2^n
 
@@ -197,11 +201,13 @@ int main(int argc, char *argv[])
     std::cout << dim << " " << transcurrido.count() << std::endl;
 
     // Escritura de la matriz en el archivo de salida
-    for(int i=0; i < dim; ++i){
-        for(int j = 0; j < dim; ++j){
-            salida << M[i][j] << "\t"; 
+    if(n <= EXP_MAX_SALIDA){
+        for(int i=0; i < dim; ++i){
+            for(int j = 0; j < dim; ++j){
+                salida << M[i][j] << "\t"; 
+            }
+            salida << std::endl;
         }
-        salida << std::endl;
     }
 
 
@@ -210,6 +216,11 @@ int main(int argc, char *argv[])
         delete[] M[i];
     }
     delete[] M;
+
+    // cierre de flujos
+    if(n <= EXP_MAX_SALIDA){
+        salida.close();
+    }
 
     return 0;
 }
