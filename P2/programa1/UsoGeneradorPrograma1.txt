@@ -1,0 +1,33 @@
+Para obtener el ejecutable del generador (y de los programas), hacer make
+gracias al makefile disponible.
+
+Para la correcta ejecución del generador, es necesario tener creadas las
+carpetas (en el directorio en el que se encuentra este archivo):
+- instancias
+- tiempos
+
+Para ejecutar el generador, pasarle los siguientes argumentos:
+./generadorPrograma1 ./archivoEjecutable min max salto rango [estado]
+
+(Donde los corchetes de 'estado' indican que es un parámetro opcional. Además,
+es necesario especificar './' antes del archivo ejecutable).
+- min: Indica el mínimo valor de n.
+- max: Indica el máximo valor de n.
+- salto: Indica el salto entre valores de n.
+- rango: Los n números generados estarán dentro del intervalo [-rango, rango].
+- estado: Indica qué queremos que haga el generador (si no se especifica,
+  estado = 3)
+    - estado = 1: El generador genera las instancias indicadas dentro de la 
+    carpeta ./instancias
+    - estado = 2: Realiza lo anterior y ejecuta las instancias generadas, 
+    obteniendo dentro de la carpeta ./tiempos un archivo con los tiempos
+    de ejecución de todos los tamaños de n especificados.
+    - estado = 3: Realiza lo anterior y genera las gráficas de dispersión
+    de puntos (tamaño de n, tiempo de ejecución) y la gráfica de la 
+    recta de regresión según el archivo 'script_programa1.gp'
+
+Las instancias generadas serán archivos con el formato:
+n
+x x x x x ... x
+
+Donde hay n 'x', números en [-rango, rango]

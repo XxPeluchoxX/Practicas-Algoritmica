@@ -1,0 +1,43 @@
+Para obtener el ejecutable del generador (y de los programas), hacer make
+gracias al makefile disponible.
+
+Para la correcta ejecución del generador, es necesario tener creadas las
+carpetas (en el directorio en el que se encuentra este archivo):
+- instancias
+- tiempos
+- salidas
+- salidas/dibujos
+
+Para ejecutar el generador, pasarle los siguientes argumentos:
+./generadorPrograma3 ./archivoEjecutable min max salto [estado]
+
+(Donde los corchetes de 'estado' indican que es un parámetro opcional. Además,
+es necesario especificar './' antes del archivo ejecutable).
+- min: Indica el mínimo valor de n.
+- max: Indica el máximo valor de n.
+- salto: Indica el salto entre valores de n.
+- estado: Indica qué queremos que haga el generador (si no se especifica,
+  estado = 4)
+    - estado = 1: El generador genera las instancias indicadas dentro de la 
+    carpeta ./instancias
+    - estado = 2: Realiza lo anterior y ejecuta las instancias generadas, 
+    obteniendo dentro de la carpeta ./tiempos un archivo con los tiempos
+    de ejecución de todos los tamaños de n especificados.
+    Además, generará en la carpeta ./salidas archivos con las soluciones
+    para cada tamaño de n
+    - estado = 3: Realiza lo anterior y genera las gráficas de dispersión
+    de puntos (tamaño de n, tiempo de ejecución) y la gráfica de la 
+    recta de regresión según el archivo 'script_programa3.gp'
+    - estado = 4: Dibuja gracias a gnuplot todos los caminos generados
+    en la carpeta ./salidas, guardando los dibujos en ./salidas/dibujos
+
+Las instancias generadas serán archivos con el formato:
+n
+x y
+x y
+.
+.
+.
+x y
+
+Donde tenemos n puntos (x, y) a unir.
