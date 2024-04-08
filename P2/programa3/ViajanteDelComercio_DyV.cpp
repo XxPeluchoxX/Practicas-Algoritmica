@@ -14,7 +14,7 @@ using namespace std;
 using namespace std::chrono;
 
 
-#define UMBRAL_ITERATIVO 3
+#define UMBRAL_ITERATIVO 8
 
 /**
  * @brief Calcula la distancia euclidea entre dos puntos en el plano.

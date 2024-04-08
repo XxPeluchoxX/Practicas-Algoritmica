@@ -8,7 +8,7 @@
 # make save_DyV: guarda los resultados del Divide y Vencerás en una carpeta, conclusiones_DyV, y se llama a clean
 
 CXX = g++				# Compilador a utilizar
-CXXFLAGS = -Wall -O2	# Opciones de compilación
+CXXFLAGS = -O2	# Opciones de compilación
 
 # Lista de todos los programas a compilar
 PROGRAMS = Subsecuencia_Iterativo Subsecuencia_DyV generadorPrograma1

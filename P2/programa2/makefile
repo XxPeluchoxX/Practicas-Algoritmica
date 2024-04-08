@@ -8,7 +8,7 @@
 
 
 CXX = g++				# Compilador a utilizar
-CXXFLAGS = -Wall -O2	# Opciones de compilación
+CXXFLAGS = -O2	# Opciones de compilación
 
 # Lista de todos los programas a compilar
 PROGRAMS = Enlosar generadorPrograma2

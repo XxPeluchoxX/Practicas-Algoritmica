@@ -117,7 +117,7 @@ void generaScriptGnuplot(int n, const string& datos, const string& ruta, const s
  * min: Minimo valor de n
  * max: Maximo valor de n
  * salto: Saltos entre n
- * [estado]: {1, 2, 3} Si no es especifica, 3 por defecto
+ * [estado]: {1, 2, 3, 4} Si no es especifica, 4 por defecto
  *      1: Sólo genera instancias
  *      2: Sólo genera instancias y ejecuta midiendo tiempos
  *      3: Hace 2 y genera gráfica y regresión
