@@ -13,8 +13,8 @@ set terminal pngcairo
 set output "programa1.png"
 replot
 
-f(x) = a*x*log(x) + b
-# f(x) = a*x + b
+f(x)=a*x*log(x)+b
+#f(x)=a*x+b
 fit f(x) "programa1" via a,b
 plot "programa1" with points, f(x)
 set terminal pngcairo
