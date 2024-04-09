@@ -1,57 +1,10 @@
-
-
-*******************************************************************************
-Tue Apr  9 17:36:13 2024
-
-
-FIT:    data read from "programa1"
-        format = z
-        #datapoints = 48
-        residuals are weighted equally (unit weight)
-
-function used for fitting: f(x)
-	f(x)=a*x*log(x)+b
-fitted parameters initialized with current variable values
-
-iter      chisq       delta/lim  lambda   a             b            
-   0 3.0308921058e+15   0.00e+00  5.62e+06    1.000000e+00   1.000000e+00
-   4 1.1486694494e+01  -7.31e-02  5.62e+02   -1.061267e-07   9.999995e-01
-
-After 4 iterations the fit converged.
-final sum of squares of residuals : 11.4867
-rel. change during last iteration : -7.30549e-07
-
-degrees of freedom    (FIT_NDF)                        : 46
-rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.499711
-variance of residuals (reduced chisquare) = WSSR/ndf   : 0.249711
-
-Final set of parameters            Asymptotic Standard Error
-=======================            ==========================
-a               = -1.06127e-07     +/- 1.852e-08    (17.45%)
-b               = 1                +/- 0.1472       (14.72%)
-
-correlation matrix of the fit parameters:
-                a      b      
-a               1.000 
-b              -0.872  1.000 
-
-
-*******************************************************************************
-Tue Apr  9 17:36:18 2024
-
-
-FIT:    data read from "programa1"
-        format = z
-        #datapoints = 48
-        residuals are weighted equally (unit weight)
-
-function used for fitting: f(x)
-	f(x)=a*x*log(x)+b
-fitted parameters initialized with current variable values
-
 iter      chisq       delta/lim  lambda   a             b            
    0 1.1486694494e+01   0.00e+00  9.25e-01   -1.061267e-07   9.999995e-01
+   1 2.1587911034e-01  -5.22e+06  9.25e-02   -1.336480e-08   1.331900e-01
+   2 4.8547212511e-04  -4.44e+07  9.25e-03    3.345389e-09   2.016318e-03
+   3 4.8487034519e-04  -1.24e+02  9.25e-04    3.373508e-09   1.798167e-03
    4 4.8487034519e-04  -3.48e-08  9.25e-05    3.373509e-09   1.798163e-03
+iter      chisq       delta/lim  lambda   a             b            
 
 After 4 iterations the fit converged.
 final sum of squares of residuals : 0.00048487
@@ -69,4 +22,4 @@ b               = 0.00179816       +/- 0.0009562    (53.18%)
 correlation matrix of the fit parameters:
                 a      b      
 a               1.000 
-b              -0.872  1.000 
+b              -0.872  1.000
