@@ -195,9 +195,7 @@ int main(int argc, char** argv){
         // Elimino archivo anterior
         
         string archivoTiempos = CARPETA_TIEMPOS + FICHERO_TIEMPOS;
-        if(remove(archivoTiempos.c_str()) != 0){
-            cout << "Error al borrar archivo de tiempos antiguo" << endl;
-        }
+        remove(archivoTiempos.c_str());
 
         // borro contenido de carpeta de salidas
 

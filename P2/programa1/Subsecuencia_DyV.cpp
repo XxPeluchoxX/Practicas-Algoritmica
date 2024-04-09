@@ -83,7 +83,7 @@ pair<int,int> subsecMax_DyV (const vector<int> &v, int init, int fin){
     pair<int,int> bounds_max;
     int  suma_max;
     
-    const int UMBRAL = 6;
+    const int UMBRAL = 1;
 
 
     if(fin-init<=UMBRAL){
