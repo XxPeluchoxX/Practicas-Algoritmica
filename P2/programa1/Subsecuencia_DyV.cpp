@@ -31,6 +31,43 @@ int suma(const vector<int> & v, int init, int fin){
     return result;
 }
 
+pair<int,int> subsecMax_Iterativo (const vector<int> &v, int init, int fin){
+
+    // Variables para almacenar la subsecuencia maxima local
+    int localini=0, localfin=0, localmax=0;
+
+    int max=0; // Variable para almacenar la suma de la subsecuencia maxima por ahora
+    const int INVALID_INDEX = -1; // Valor para indicar que no se ha encontrado una subsecuencia valida
+    pair<int,int> bounds_max(INVALID_INDEX,INVALID_INDEX); // Limites de la subsecuencia maxima
+
+    
+    for(int i=init; i<=fin; ++i){
+        
+        // Si la suma local es negativa, no la consideramos porque nos quedaremos con la subsecuencia vacia
+        if(localmax >= 0){
+            // Se actualiza la suma local y el límite de la derecha avanza
+            localmax += v[i];
+            localfin = i;
+        } else{
+            // La subsecuencia anterior no era válida. La reseteamos a la subsecuencia que empieza en i 
+            localmax = v[i];
+            localini = localfin = i;
+        }
+
+
+        // Actualizamos la subsecuencia maxima si la suma local es mayor
+                //Si se quiere la subsecuencia mas pequeña posible, añadir:
+                // || (localmax == max && localfin - localini < bounds_max.second - bounds_max.first)
+        if (localmax > max){ 
+            max = localmax;
+            bounds_max.first = localini;
+            bounds_max.second = localfin;
+        }
+        
+    }
+    return bounds_max;
+
+}
 
 
 /**
@@ -46,13 +83,12 @@ pair<int,int> subsecMax_DyV (const vector<int> &v, int init, int fin){
     pair<int,int> bounds_max;
     int  suma_max;
     
-    // Caso base. n=1
-    if(fin <= init){
-        bounds_max.first=bounds_max.second=init;
-        suma_max=v[init];
-    }
-        
+    const int UMBRAL = 6;
 
+
+    if(fin-init<=UMBRAL){
+        bounds_max = subsecMax_Iterativo(v,init,fin);
+    }
     else{
         int middle=init + (fin-init)/2;
 
